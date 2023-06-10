@@ -1,0 +1,88 @@
+[
+    {
+        "category": "binary",
+        "id": "riscv-hello",
+        "description": "A 'Hello World!' binary, compiled to RISCV.",
+        "architecture": "RISCV",
+        "size": 4674040,
+        "tags": [
+            "hello"
+        ],
+        "is_zipped": false,
+        "md5sum": "6d9494d22b90d817e826b0d762fda973",
+        "source": "src/simple",
+        "url": "http://dist.gem5.org/dist/develop/test-progs/hello/bin/riscv/linux/hello-20220728",
+        "code_examples": [
+            {
+                "example": "https://github.com/gem5/gem5/tree/develop/configs/example/gem5_library/checkpoints/riscv-hello-restore-checkpoint.py",
+                "tested": true
+            },
+            {
+                "example": "https://github.com/gem5/gem5/tree/develop/configs/example/gem5_library/checkpoints/riscv-hello-save-checkpoint.py",
+                "tested": true
+            },
+            {
+                "example": "https://github.com/gem5/gem5/tree/develop/configs/example/gem5_library/riscvmatched-hello.py",
+                "tested": true
+            }
+        ],
+        "license": "",
+        "author": [],
+        "source_url": "https://github.com/gem5/gem5-resources/tree/develop/src/simple",
+        "resource_version": "2.0.0",
+        "gem5_versions": [
+            "23.0"
+        ],
+        "example_usage": "obtain_resource(resource_id=\"riscv-hello\")"
+    },
+    {
+        "category": "binary",
+        "id": "rv64uf-ps-fmin",
+        "description": "A RISCV binary used to test a specific RISCV instruction.",
+        "architecture": "RISCV",
+        "size": 14880,
+        "tags": [
+            "asmtest",
+            "testing",
+            "riscv"
+        ],
+        "is_zipped": false,
+        "md5sum": "5d7873d9994576de3c651a82eddfd28e",
+        "source": "src/asmtest",
+        "url": "http://dist.gem5.org/dist/develop/test-progs/asmtest/bin/rv64uf-ps-fmin",
+        "code_examples": [],
+        "license": " BSD-3-Clause",
+        "author": [],
+        "source_url": "https://github.com/gem5/gem5-resources/tree/develop/src/asmtest",
+        "resource_version": "1.0.0",
+        "gem5_versions": [
+            "23.0"
+        ],
+        "example_usage": "obtain_resource(resource_id=\"rv64uf-ps-fmin\")"
+    },
+    {
+        "category": "binary",
+        "id": "special-resource",
+        "description": "A RISCV binary used to test a specific RISCV instruction.",
+        "architecture": "RISCV",
+        "size": 14880,
+        "tags": [
+            "asmtest",
+            "testing",
+            "riscv"
+        ],
+        "is_zipped": false,
+        "md5sum": "5d7873d9994576de3c651a82eddfd28e",
+        "source": "src/asmtest",
+        "url": "http://dist.gem5.org/dist/develop/test-progs/hello/bin/riscv/linux/hello-20220728",
+        "code_examples": [],
+        "license": " BSD-3-Clause",
+        "author": [],
+        "source_url": "https://github.com/gem5/gem5-resources/tree/develop/src/asmtest",
+        "resource_version": "10.0.0",
+        "gem5_versions": [
+            "23.0"
+        ],
+        "example_usage": "obtain_resource(resource_id=\"special-resource\")"
+    }
+]
