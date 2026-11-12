@@ -504,6 +504,15 @@ class Fetch
     /** The size of the fetch queue in micro-ops */
     unsigned fetchQueueSize;
 
+    /** Bubbles charged when the main predictor overrides the fast one. */
+    unsigned lateOverrideBubbles;
+
+    /** Fast first-stage bimodal predictor (2-bit counters). */
+    std::vector<uint8_t> fastPred;
+
+    /** Remaining override bubbles per thread. */
+    unsigned lateOverrideStall[MaxThreads] = {};
+
     /** Queue of fetched instructions. Per-thread to prevent HoL blocking. */
     std::deque<DynInstPtr> fetchQueue[MaxThreads];
 
@@ -559,6 +568,10 @@ class Fetch
         statistics::Vector status;
         /** Stat for total number of predicted branches. */
         statistics::Scalar predictedBranches;
+        /** Predictions where the main predictor overrode the fast one. */
+        statistics::Scalar lateOverrides;
+        /** Cycles fetch spent in late-override bubbles. */
+        statistics::Scalar lateOverrideCycles;
         /** Total number of cycles spent in any other state. */
         statistics::Scalar miscStallCycles;
         /** Total number of cycles spent in waiting for drains. */

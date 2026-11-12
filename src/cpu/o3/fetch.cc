@@ -130,6 +130,8 @@ Fetch::Fetch(CPU *_cpu, const BaseO3CPUParams &params)
       fetchBufferSize(params.fetchBufferSize),
       fetchBufferMask(fetchBufferSize - 1),
       fetchQueueSize(params.fetchQueueSize),
+      lateOverrideBubbles(params.fetchLateOverrideBubbles),
+      fastPred(params.fetchFastPredEntries, 1),
       numThreads(params.numThreads),
       numFetchingThreads(params.smtNumFetchingThreads),
       icachePort(this, _cpu),
@@ -197,6 +199,10 @@ Fetch::regProbePoints()
 Fetch::FetchStatGroup::FetchStatGroup(CPU *cpu, Fetch *fetch)
     : statistics::Group(cpu, "fetch"),
       ADD_STAT(status, statistics::units::Cycle::get(), "Fetch status cycles"),
+      ADD_STAT(lateOverrides, statistics::units::Count::get(),
+               "Number of fast predictions overridden by the main predictor"),
+      ADD_STAT(lateOverrideCycles, statistics::units::Cycle::get(),
+               "Number of fetch bubbles caused by late predictor overrides"),
       ADD_STAT(predictedBranches, statistics::units::Count::get(),
                "Number of branches that fetch has predicted taken"),
       ADD_STAT(
@@ -710,6 +716,8 @@ void
 Fetch::doSquash(const PCStateBase &new_pc, const DynInstPtr squashInst,
         ThreadID tid)
 {
+    lateOverrideStall[tid] = 0;
+
     DPRINTF(Fetch, "[tid:%i] Squashing, setting PC to: %s.\n",
             tid, new_pc);
 
@@ -1075,6 +1083,13 @@ Fetch::fetch(bool &status_change)
         return;
     }
 
+    // A late predictor override leaves bubbles in the fetch pipeline.
+    if (lateOverrideStall[tid] > 0) {
+        --lateOverrideStall[tid];
+        ++fetchStats.lateOverrideCycles;
+        return;
+    }
+
     // Check if the FTQ is ready and process the head of the fetch target.
     // In the non decoupled front-end ftqReady() will always return true;
     if (!ftqReady(tid, status_change)) {
@@ -1184,6 +1199,9 @@ Fetch::fetch(bool &status_change)
     // Need to halt fetch if quiesce instruction detected
     bool quiesce = false;
 
+    // Set when the main predictor overrode the fast one in this cycle.
+    bool lateOverride = false;
+
     const unsigned numInsts = fetchBufferSize / instSize;
     unsigned blkOffset = (fetchAddr - fetchBufferPC[tid]) / instSize;
 
@@ -1194,7 +1212,7 @@ Fetch::fetch(bool &status_change)
     // Keep issuing while fetchWidth is available and branch is not
     // predicted taken
     while (numInst < fetchWidth && fetchQueue[tid].size() < fetchQueueSize
-           && !predictedBranch && !quiesce) {
+           && !predictedBranch && !quiesce && !lateOverride) {
 
         // For the decoupled front-end also check if the FTQ
         // and the fetch target are still valid.
@@ -1292,6 +1310,28 @@ Fetch::fetch(bool &status_change)
 
             if (instruction->isControl()) {
                 cpu->fetchStats[tid]->numBranches++;
+            }
+
+            // Two-stage prediction: a fast bimodal predictor steers fetch
+            // first; if the main predictor disagrees on a conditional
+            // branch, the instructions fetched meanwhile are dropped,
+            // which costs lateOverrideBubbles cycles. The fast predictor
+            // is trained with the main predictor's decision.
+            if (lateOverrideBubbles > 0 && !decoupledFrontEnd &&
+                instruction->isCondCtrl()) {
+                const bool final_taken = instruction->readPredTaken();
+                uint8_t &ctr = fastPred[(this_pc.instAddr() >> 1) %
+                                        fastPred.size()];
+                if ((ctr >= 2) != final_taken) {
+                    lateOverride = true;
+                    lateOverrideStall[tid] = lateOverrideBubbles;
+                    ++fetchStats.lateOverrides;
+                }
+                if (final_taken) {
+                    if (ctr < 3) ++ctr;
+                } else {
+                    if (ctr > 0) --ctr;
+                }
             }
             if (predictedBranch) {
                 DPRINTF(Fetch, "Branch detected with PC = %s -> targ: %s, \n",

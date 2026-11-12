@@ -226,6 +226,16 @@ class BaseO3CPU(BaseCPU):
         64, "Maximum number of receive response bytes per cycle"
     )
 
+    fetchLateOverrideBubbles = Param.Unsigned(
+        0,
+        "Fetch bubbles inserted when the main direction predictor overrides "
+        "a fast first-stage bimodal prediction of a conditional branch "
+        "(0 disables the two-stage model)",
+    )
+    fetchFastPredEntries = Param.Unsigned(
+        2048, "Entries of the fast first-stage bimodal predictor"
+    )
+
     ## Parameters for decoupled front-end
     decoupledFrontEnd = Param.Bool(False, "Enables the decoupled front-end")
     numFTQEntries = Param.Unsigned(
