@@ -1,0 +1,63 @@
+BENCH name cycles instret
+PROBE f1clr=57507 f2clr=46567 f4clr=20571 f1red=101913 f2red=78012 misp=10436 flush=4 sfb0=0 sfb1=0 ldinc=32672 ldretry=0 ldwake=29 fwd=89 ldmiss=3488 icrefill=7
+RES qsort_cold 213964 185062 chk=c6679311c69b6b7b
+PROBE f1clr=54749 f2clr=44286 f4clr=18724 f1red=98381 f2red=74582 misp=9461 flush=4 sfb0=0 sfb1=0 ldinc=32883 ldretry=0 ldwake=27 fwd=124 ldmiss=3629 icrefill=0
+RES qsort_warm 204843 185062 chk=c6679311c69b6b7b
+PROBE f1clr=15106 f2clr=601 f4clr=52 f1red=21292 f2red=19776 misp=24 flush=4 sfb0=0 sfb1=0 ldinc=16422 ldretry=0 ldwake=187 fwd=0 ldmiss=8 icrefill=4
+RES matmul_cold 49401 58596 chk=173d1
+PROBE f1clr=14871 f2clr=463 f4clr=10 f1red=21683 f2red=18848 misp=3 flush=4 sfb0=0 sfb1=0 ldinc=16428 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES matmul_warm 48920 58596 chk=173d1
+PROBE f1clr=21756 f2clr=3147 f4clr=730 f1red=34570 f2red=22536 misp=363 flush=4 sfb0=0 sfb1=0 ldinc=1526 ldretry=0 ldwake=2 fwd=0 ldmiss=21 icrefill=2
+RES crc_cold 72821 112522 chk=19a52dcd
+PROBE f1clr=22017 f2clr=3248 f4clr=1070 f1red=34268 f2red=24435 misp=533 flush=4 sfb0=0 sfb1=0 ldinc=1523 ldretry=0 ldwake=2 fwd=0 ldmiss=12 icrefill=0
+RES crc_warm 73636 112522 chk=19a52dcd
+PROBE f1clr=111700 f2clr=1154 f4clr=695 f1red=127820 f2red=40333 misp=17 flush=26 sfb0=0 sfb1=0 ldinc=27112 ldretry=0 ldwake=8403 fwd=13 ldmiss=16816 icrefill=3
+RES list_cold 264672 126024 chk=cdeccc
+PROBE f1clr=108493 f2clr=1068 f4clr=683 f1red=124772 f2red=19609 misp=10 flush=26 sfb0=0 sfb1=0 ldinc=27116 ldretry=0 ldwake=8019 fwd=48 ldmiss=16690 icrefill=0
+RES list_warm 258355 126024 chk=cdeccc
+PROBE f1clr=84717 f2clr=49795 f4clr=22313 f1red=150698 f2red=116655 misp=11226 flush=4 sfb0=0 sfb1=0 ldinc=29304 ldretry=0 ldwake=22 fwd=0 ldmiss=3178 icrefill=2
+RES bsearch_cold 295887 185541 chk=102443
+PROBE f1clr=83709 f2clr=49951 f4clr=22366 f1red=149670 f2red=117838 misp=11250 flush=4 sfb0=0 sfb1=0 ldinc=29219 ldretry=0 ldwake=2 fwd=0 ldmiss=3007 icrefill=0
+RES bsearch_warm 293443 185541 chk=102443
+PROBE f1clr=10596 f2clr=5780 f4clr=3656 f1red=76404 f2red=69079 misp=1826 flush=4 sfb0=0 sfb1=0 ldinc=14743 ldretry=0 ldwake=1 fwd=0 ldmiss=1422 icrefill=2
+RES sieve_cold 114623 223534 chk=59e
+PROBE f1clr=12450 f2clr=6908 f4clr=3916 f1red=77636 f2red=69477 misp=1956 flush=4 sfb0=0 sfb1=0 ldinc=14740 ldretry=0 ldwake=1 fwd=0 ldmiss=1413 icrefill=0
+RES sieve_warm 117257 223534 chk=59e
+PROBE f1clr=4241 f2clr=2556 f4clr=248 f1red=10189 f2red=7075 misp=122 flush=4 sfb0=0 sfb1=0 ldinc=10015 ldretry=0 ldwake=130 fwd=4762 ldmiss=153 icrefill=1
+RES fib_cold 22452 56331 chk=63d
+PROBE f1clr=4076 f2clr=2434 f4clr=112 f1red=9965 f2red=6877 misp=54 flush=4 sfb0=0 sfb1=0 ldinc=9981 ldretry=0 ldwake=54 fwd=4786 ldmiss=63 icrefill=0
+RES fib_warm 21635 56331 chk=63d
+PROBE f1clr=19040 f2clr=8608 f4clr=3914 f1red=47291 f2red=38781 misp=1955 flush=4 sfb0=0 sfb1=0 ldinc=7002 ldretry=0 ldwake=552 fwd=4 ldmiss=1376 icrefill=4
+RES hash_cold 98125 91150 chk=3d7bea
+PROBE f1clr=14729 f2clr=8943 f4clr=3875 f1red=38651 f2red=34300 misp=1936 flush=4 sfb0=0 sfb1=0 ldinc=6953 ldretry=0 ldwake=110 fwd=4 ldmiss=763 icrefill=0
+RES hash_warm 87850 91150 chk=3d7bea
+PROBE f1clr=60623 f2clr=970 f4clr=65 f1red=92132 f2red=86200 misp=27 flush=5 sfb0=0 sfb1=0 ldinc=24866 ldretry=0 ldwake=780 fwd=0 ldmiss=539 icrefill=4
+RES str_cold 165119 156540 chk=306c
+PROBE f1clr=59971 f2clr=553 f4clr=37 f1red=91958 f2red=86512 misp=13 flush=5 sfb0=0 sfb1=0 ldinc=24875 ldretry=0 ldwake=2 fwd=0 ldmiss=23 icrefill=0
+RES str_warm 164434 156540 chk=306c
+PROBE f1clr=22083 f2clr=177 f4clr=12 f1red=19421 f2red=5390 misp=4 flush=4 sfb0=0 sfb1=0 ldinc=2535 ldretry=0 ldwake=278 fwd=0 ldmiss=23 icrefill=3
+RES fp_cold 59110 40033 chk=515645
+PROBE f1clr=21543 f2clr=172 f4clr=12 f1red=18895 f2red=5046 misp=4 flush=4 sfb0=0 sfb1=0 ldinc=2527 ldretry=0 ldwake=26 fwd=0 ldmiss=8 icrefill=0
+RES fp_warm 57770 40033 chk=515645
+PROBE f1clr=39319 f2clr=1764 f4clr=1060 f1red=83984 f2red=49453 misp=528 flush=4 sfb0=0 sfb1=0 ldinc=18 ldretry=0 ldwake=2 fwd=0 ldmiss=9 icrefill=1
+RES gcd_cold 96554 36968 chk=4a0
+PROBE f1clr=39386 f2clr=1943 f4clr=1064 f1red=82279 f2red=48433 misp=530 flush=4 sfb0=0 sfb1=0 ldinc=25 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES gcd_warm 96760 36968 chk=4a0
+PROBE f1clr=2311 f2clr=1104 f4clr=537 f1red=18701 f2red=18082 misp=267 flush=4 sfb0=0 sfb1=0 ldinc=16238 ldretry=0 ldwake=5 fwd=5 ldmiss=252 icrefill=3
+RES isort_cold 53866 113146 chk=32cc7cdc3bc1fe42
+PROBE f1clr=2232 f2clr=1052 f4clr=519 f1red=18680 f2red=18071 misp=258 flush=4 sfb0=0 sfb1=0 ldinc=16239 ldretry=0 ldwake=5 fwd=9 ldmiss=253 icrefill=0
+RES isort_warm 53680 113146 chk=32cc7cdc3bc1fe42
+PROBE f1clr=170138 f2clr=3434 f4clr=26 f1red=293452 f2red=171563 misp=11 flush=4 sfb0=0 sfb1=0 ldinc=240635 ldretry=0 ldwake=128264 fwd=0 ldmiss=159551 icrefill=2
+RES stencil_cold 615069 1042497 chk=4de7a80e00
+PROBE f1clr=155383 f2clr=3321 f4clr=25 f1red=272572 f2red=162831 misp=8 flush=4 sfb0=0 sfb1=0 ldinc=240634 ldretry=0 ldwake=118588 fwd=0 ldmiss=156456 icrefill=0
+RES stencil_warm 586516 1042497 chk=4de7a80e00
+PROBE f1clr=22995 f2clr=5340 f4clr=3214 f1red=114340 f2red=94942 misp=1605 flush=4 sfb0=0 sfb1=0 ldinc=26 ldretry=0 ldwake=2 fwd=0 ldmiss=17 icrefill=2
+RES bits_cold 121595 208036 chk=bc7c
+PROBE f1clr=22911 f2clr=5472 f4clr=3249 f1red=114275 f2red=94978 misp=1622 flush=4 sfb0=0 sfb1=0 ldinc=24 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES bits_warm 121615 208036 chk=bc7c
+PROBE f1clr=38046 f2clr=30731 f4clr=24639 f1red=172765 f2red=157981 misp=9889 flush=4 sfb0=0 sfb1=0 ldinc=43621 ldretry=0 ldwake=2 fwd=0 ldmiss=10348 icrefill=3
+RES interp_cold 260069 168409 chk=38be20c106a42744
+PROBE f1clr=36769 f2clr=28558 f4clr=20774 f1red=175061 f2red=157983 misp=9688 flush=4 sfb0=0 sfb1=0 ldinc=43220 ldretry=0 ldwake=2 fwd=0 ldmiss=9965 icrefill=0
+RES interp_warm 257296 168409 chk=38be20c106a42744
+DONE
+- LargeBoomP.sv:312124: Verilog $finish

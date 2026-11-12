@@ -26,11 +26,17 @@ gem5, 42.5% with fitted parameters alone, and 4.2% with parameters plus patches.
 fitting overfits wherever the true behaviour is a function (S3): the single divide latency that
 fits one operand pair is wrong for every other.
 
-On LargeBoom the same 30 runs give 18.4% stock, 55.9% parameters only, 11.9% with patches.
-Two workloads show that a fix does not generalise: insertion sort is +56% because the constant
-`LSQForwardDelay` charges every forwarded load, while the RTL (S8) only penalises loads whose
-store data arrives late; the stencil is -38%, a store-heavy pattern over 320 KiB that no spec
-here covers yet.
+On LargeBoom the same 30 runs give 18.4% stock, 53.5% parameters only, and 9.7% with patches
+and the byte-exact ordering check (S12). The stencil is still -38%: RTL counters show about
+119,000 load wakeups for 241,000 loads, i.e. the miss-retry behaviour behind S9, which is only
+approximated by a halved MSHR count.
+
+## Specs read from lsu.scala (memory ordering)
+
+| ID | Spec | Stock gem5 | Status |
+|----|------|-----------|--------|
+| S12 | Ordering violations are detected at byte granularity (doubleword match plus byte mask). | violates: `LSQDepCheckShift=4` compares 16-byte blocks, so neighbouring array elements raise false violations, which then train the store-set predictor to serialise the loop | fixed by parameter (`LSQDepCheckShift=0`); insertion sort on LargeBoom goes from +56% to -20% |
+| S13 | Loads never wait for a store by prediction. Store addresses resolve independently of store data; a load matching a store whose data is late stays un-executed and is re-fired every third cycle; a load passing a store with unknown address is flushed on a later match. | violates: address and data resolve together; loads wait on PC-indexed store sets | prototype (`LSQResolveStoreAddrEarly`, `memDepPrediction`) builds and is functionally correct but is NOT faithful yet: it retries 4 to 5 times per load where the RTL retries 2.7 times, and does not improve cycle error. Off by default and not part of the calibration. |
 
 ## Not yet explained
 
