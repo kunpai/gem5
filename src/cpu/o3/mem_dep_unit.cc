@@ -104,6 +104,7 @@ MemDepUnit::init(const BaseO3CPUParams &params, ThreadID tid, CPU *cpu)
     DPRINTF(MemDepUnit, "Creating MemDepUnit %i object.\n",tid);
 
     id = tid;
+    usePredictor = params.memDepPrediction;
 
     depPred.init(params.store_set_clear_period,
                  params.SSITSize, params.SSITAssoc, params.SSITReplPolicy,
@@ -230,7 +231,8 @@ MemDepUnit::insert(const DynInstPtr &inst)
                                 std::begin(storeBarrierSNs),
                                 std::end(storeBarrierSNs));
     } else {
-        InstSeqNum dep = depPred.checkInst(inst->pcState().instAddr());
+        InstSeqNum dep = usePredictor ?
+            depPred.checkInst(inst->pcState().instAddr()) : 0;
         if (dep != 0)
             producing_stores.push_back(dep);
     }

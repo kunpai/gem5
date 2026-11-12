@@ -209,6 +209,21 @@ class BaseO3CPU(BaseCPU):
         "Branch Predictor",
     )
     needsTSO = Param.Bool(False, "Enable TSO Memory model")
+    LSQResolveStoreAddrEarly = Param.Bool(
+        False,
+        "Stores resolve their address as soon as the base register is "
+        "ready, independently of the store data (split store-address / "
+        "store-data). A load that matches such a store whose data is not "
+        "ready yet is retried instead of reading stale data.",
+    )
+    LSQStoreDataRetryDelay = Param.Cycles(
+        1, "Cycles before a load waiting for store data is replayed"
+    )
+    memDepPrediction = Param.Bool(
+        True,
+        "Use the store-set predictor to make loads wait for stores. "
+        "False lets every load issue as soon as its address is ready.",
+    )
     LSQForwardDelay = Param.Cycles(
         0,
         "Extra cycles before a load that is forwarded from the store queue "

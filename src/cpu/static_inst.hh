@@ -291,6 +291,18 @@ class StaticInst : public RefCounted, public StaticInstFlags
   public:
     virtual ~StaticInst() {};
 
+    /**
+     * For memory instructions whose address is base register plus a
+     * constant: report which source operand is the base and the
+     * displacement, so the address can be known before the instruction
+     * executes. Returns false if not applicable.
+     */
+    virtual bool
+    memBaseDisp(int &base_src_idx, int64_t &disp) const
+    {
+        return false;
+    }
+
     virtual Fault execute(ExecContext *xc,
             trace::InstRecord *traceData) const = 0;
 

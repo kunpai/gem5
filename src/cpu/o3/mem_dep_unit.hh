@@ -243,6 +243,9 @@ class MemDepUnit
      */
     StoreSet depPred;
 
+    /** Whether loads wait for stores named by the predictor. */
+    bool usePredictor = true;
+
     /** Sequence numbers of outstanding load barriers. */
     std::unordered_set<InstSeqNum> loadBarrierSNs;
 

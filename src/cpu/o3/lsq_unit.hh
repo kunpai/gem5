@@ -522,6 +522,12 @@ class LSQUnit
     /** Extra store-to-load forwarding latency. */
     Cycles forwardDelay;
 
+    /** Stores expose their address before their data is ready. */
+    bool resolveStoreAddrEarly;
+
+    /** Replay delay for a load waiting on store data. */
+    Cycles storeDataRetryDelay;
+
   protected:
     // Will also need how many read/write ports the Dcache has.  Or keep track
     // of that in stage that is one level up, and only call executeLoad/Store
@@ -548,6 +554,12 @@ class LSQUnit
 
         /** Number of loads that were rescheduled. */
         statistics::Scalar rescheduledLoads;
+
+        /** Load executions retried because matching store data was late. */
+        statistics::Scalar storeDataRetries;
+
+        /** Early store addresses that differed from the executed one. */
+        statistics::Scalar earlyAddrMismatches;
 
         /** Number of times the LSQ is blocked due to the cache. */
         statistics::Scalar blockedByCache;

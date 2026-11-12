@@ -67,6 +67,17 @@ class Store : public MemInst
   protected:
     using MemInst::MemInst;
 
+  public:
+    bool
+    memBaseDisp(int &base_src_idx, int64_t &disp) const override
+    {
+        base_src_idx = 0;
+        disp = offset;
+        return true;
+    }
+
+  protected:
+
     std::string generateDisassembly(
         Addr pc, const loader::SymbolTable *symtab) const override;
 };

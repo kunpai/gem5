@@ -545,6 +545,16 @@ class InstructionQueue
      */
     std::vector<bool> regScoreboard;
 
+  public:
+    /** True if the value of a renamed source register is available. */
+    bool
+    isRegReady(PhysRegIdPtr reg) const
+    {
+        return reg->isAlwaysReady() || regScoreboard[reg->flatIndex()];
+    }
+
+  private:
+
     /** Adds an instruction to the dependency graph, as a consumer. */
     bool addToDependents(const DynInstPtr &new_inst);
 

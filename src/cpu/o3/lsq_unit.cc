@@ -240,6 +240,8 @@ LSQUnit::init(CPU *cpu_ptr, IEW *iew_ptr, const BaseO3CPUParams &params,
     checkLoads = params.LSQCheckLoads;
     needsTSO = params.needsTSO;
     forwardDelay = params.LSQForwardDelay;
+    resolveStoreAddrEarly = params.LSQResolveStoreAddrEarly;
+    storeDataRetryDelay = params.LSQStoreDataRetryDelay;
 
     resetState();
 }
@@ -287,6 +289,10 @@ LSQUnit::LSQUnitStats::LSQUnitStats(statistics::Group *parent)
                "Number of memory ordering violations"),
       ADD_STAT(squashedStores, statistics::units::Count::get(),
                "Number of stores squashed"),
+      ADD_STAT(storeDataRetries, statistics::units::Count::get(),
+               "Number of load retries waiting for matching store data"),
+      ADD_STAT(earlyAddrMismatches, statistics::units::Count::get(),
+               "Number of early store addresses that were wrong"),
       ADD_STAT(rescheduledLoads, statistics::units::Count::get(),
                "Number of loads that were rescheduled"),
       ADD_STAT(blockedByCache, statistics::units::Count::get(),
@@ -749,6 +755,11 @@ LSQUnit::executeStore(const DynInstPtr &store_inst)
     typename LoadQueue::iterator loadIt = store_inst->lqIt;
 
     Fault store_fault = store_inst->initiateAcc();
+
+    if (store_inst->earlyEffAddrValid && store_inst->effAddrValid() &&
+        store_inst->effAddr != store_inst->earlyEffAddr) {
+        ++stats.earlyAddrMismatches;
+    }
 
     if (store_inst->isTranslationDelayed() &&
         store_fault == NoFault)
@@ -1472,6 +1483,52 @@ LSQUnit::read(LSQRequest *request, ssize_t load_idx)
         assert(store_it->valid());
         assert(store_it->instruction()->seqNum < load_inst->seqNum);
         int store_size = store_it->size();
+
+        // Split store-address / store-data: a store that has not executed
+        // yet may already have a known address. A load that overlaps it
+        // cannot use the cache and cannot be forwarded yet, so it is
+        // replayed until the store data arrives.
+        if (store_size == 0 && resolveStoreAddrEarly) {
+            const DynInstPtr &st = store_it->instruction();
+            int base_idx = 0;
+            int64_t disp = 0;
+            if (!st->isSquashed() && st->isStore() && !st->isAtomic() &&
+                !st->isStoreConditional() &&
+                st->staticInst->memBaseDisp(base_idx, disp) &&
+                base_idx < (int)st->numSrcRegs() &&
+                iewStage->instQueue.isRegReady(
+                    st->renamedSrcIdx(base_idx))) {
+                const Addr st_addr =
+                    st->getRegOperand(st->staticInst.get(), base_idx) + disp;
+                st->earlyEffAddr = st_addr;
+                st->earlyEffAddrValid = true;
+                const Addr req_s = request->mainReq()->getVaddr();
+                const Addr req_e = req_s + request->mainReq()->getSize();
+                // Store size is not known yet: compare whole doublewords.
+                if ((st_addr >> 3) <= ((req_e - 1) >> 3) &&
+                    (req_s >> 3) <= ((st_addr + 7) >> 3)) {
+                    iewStage->rescheduleMemInst(load_inst);
+                    load_inst->clearIssued();
+                    load_inst->effAddrValid(false);
+                    ++stats.rescheduledLoads;
+                    ++stats.storeDataRetries;
+                    request->discard();
+                    load_entry.setRequest(nullptr);
+
+                    IEW *iew = iewStage;
+                    CPU *c = cpu;
+                    DynInstPtr li = load_inst;
+                    cpu->schedule(new EventFunctionWrapper(
+                                      [iew, c, li]() {
+                                          iew->replayMemInst(li);
+                                          c->wakeCPU();
+                                      },
+                                      "lsqStoreDataRetry", true),
+                                  cpu->clockEdge(storeDataRetryDelay));
+                    return NoFault;
+                }
+            }
+        }
 
         // Cache maintenance instructions go down via the store
         // path but they carry no data and they shouldn't be

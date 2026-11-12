@@ -342,6 +342,10 @@ class DynInst : public ExecContext, public RefCounted
 
   public:
     /////////////////////// Load Store Data //////////////////////
+    /** Address computed before execution from the base register. */
+    Addr earlyEffAddr = 0;
+    bool earlyEffAddrValid = false;
+
     /** The effective virtual address (lds & stores only). */
     Addr effAddr = 0;
 
