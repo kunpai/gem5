@@ -1,0 +1,33 @@
+BENCH name cycles instret
+RES qsort_cold 290554 185062 chk=c6679311c69b6b7b
+RES qsort_warm 284834 185062 chk=c6679311c69b6b7b
+RES matmul_cold 70532 58596 chk=173d1
+RES matmul_warm 69636 58596 chk=173d1
+RES crc_cold 120011 112522 chk=19a52dcd
+RES crc_warm 119933 112522 chk=19a52dcd
+RES list_cold 360481 126024 chk=cdeccc
+RES list_warm 354949 126024 chk=cdeccc
+RES bsearch_cold 335874 185541 chk=102443
+RES bsearch_warm 331089 185541 chk=102443
+RES sieve_cold 253366 223534 chk=59e
+RES sieve_warm 249586 223534 chk=59e
+RES fib_cold 57705 56331 chk=63d
+RES fib_warm 56897 56331 chk=63d
+RES hash_cold 164533 91150 chk=3d7bea
+RES hash_warm 160102 91150 chk=3d7bea
+RES str_cold 233926 156540 chk=306c
+RES str_warm 233067 156540 chk=306c
+RES fp_cold 69186 40033 chk=515645
+RES fp_warm 67736 40033 chk=515645
+RES gcd_cold 106333 36968 chk=4a0
+RES gcd_warm 106274 36968 chk=4a0
+RES isort_cold 116669 113146 chk=32cc7cdc3bc1fe42
+RES isort_warm 116465 113146 chk=32cc7cdc3bc1fe42
+RES stencil_cold 1151808 1042497 chk=4de7a80e00
+RES stencil_warm 1136999 1042497 chk=4de7a80e00
+RES bits_cold 224226 208036 chk=bc7c
+RES bits_warm 224241 208036 chk=bc7c
+RES interp_cold 318944 168409 chk=38be20c106a42744
+RES interp_warm 318934 168409 chk=38be20c106a42744
+DONE
+- SmallBoom.sv:181974: Verilog $finish

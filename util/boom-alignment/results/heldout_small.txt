@@ -1,0 +1,34 @@
+== held-out, small: cycle error vs BOOM RTL (baseline | +params | +patches)
+  qsort_cold     boom=  290554    -6.6%    -5.1%    -5.0%
+  qsort_warm     boom=  284834   -11.1%    -8.8%    -8.5%
+  matmul_cold    boom=   70532    -0.5%   +58.1%    -4.7%
+  matmul_warm    boom=   69636    +0.3%   +58.3%    -5.8%
+  crc_cold       boom=  120011    -5.5%    -4.8%    -0.9%
+  crc_warm       boom=  119933    -6.1%    -4.9%    -0.9%
+  list_cold      boom=  360481   -13.7%   +39.2%    -2.1%
+  list_warm      boom=  354949   -25.7%   +35.9%    -6.0%
+  bsearch_cold   boom=  335874    +0.7%   +21.3%    -1.9%
+  bsearch_warm   boom=  331089    -4.5%   +19.7%    -3.9%
+  sieve_cold     boom=  253366    +3.6%    -1.1%    -1.0%
+  sieve_warm     boom=  249586    +2.1%    -1.4%    -1.2%
+  fib_cold       boom=   57705    -0.6%    -0.8%    -0.8%
+  fib_warm       boom=   56897    -0.8%    -0.7%    -0.7%
+  hash_cold      boom=  164533    -8.7%    -8.1%    -8.4%
+  hash_warm      boom=  160102   -24.0%   -14.3%   -14.8%
+  str_cold       boom=  233926   -10.9%   +74.4%    -2.6%
+  str_warm       boom=  233067   -11.7%   +74.5%    -2.8%
+  fp_cold        boom=   69186    -7.5%    +9.6%    +9.6%
+  fp_warm        boom=   67736   -14.0%   +11.9%   +11.9%
+  gcd_cold       boom=  106333   +49.5%  +403.9%    -0.7%
+  gcd_warm       boom=  106274   +46.5%  +396.6%   -10.3%
+  isort_cold     boom=  116669    -0.4%    -0.4%    -0.4%
+  isort_warm     boom=  116465    -0.8%    -0.4%    -0.4%
+  stencil_cold   boom= 1151808    +1.2%    +0.7%    +0.7%
+  stencil_warm   boom= 1136999    -8.1%    -3.5%    -3.5%
+  bits_cold      boom=  224226    -1.5%    -0.8%    -0.8%
+  bits_warm      boom=  224241    -1.7%    -0.9%    -0.9%
+  interp_cold    boom=  318944   -14.0%    -7.2%    -7.2%
+  interp_warm    boom=  318934   -14.6%    -7.8%    -7.8%
+  baseline (sizes only)  mean|err|   9.9%  median  6.3%  max  49.5%  within10%: 19/30
+  + parameters           mean|err|  42.5%  median  8.0%  max 403.9%  within10%: 18/30
+  + code patches         mean|err|   4.2%  median  2.7%  max  14.8%  within10%: 27/30

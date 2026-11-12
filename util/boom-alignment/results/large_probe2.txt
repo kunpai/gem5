@@ -1,0 +1,49 @@
+BENCH name cycles instret
+PROBE f1clr=13477 f2clr=54 f4clr=12 f1red=13378 f2red=1270 misp=4 flush=4 sfb0=0 sfb1=0 ldinc=16 ldretry=0 ldwake=2 fwd=0 ldmiss=10 icrefill=1
+RES div_62_1 27715 1612
+PROBE f1clr=8776 f2clr=32 f4clr=8 f1red=9145 f2red=1290 misp=2 flush=4 sfb0=0 sfb1=0 ldinc=17 ldretry=0 ldwake=1 fwd=0 ldmiss=9 icrefill=0
+RES div_40_1 18885 1612
+PROBE f1clr=5046 f2clr=13 f4clr=6 f1red=5295 f2red=1473 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=21 ldretry=0 ldwake=1 fwd=0 ldmiss=7 icrefill=0
+RES div_20_1 10867 1612
+PROBE f1clr=2232 f2clr=50 f4clr=6 f1red=2610 f2red=1355 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=29 ldretry=0 ldwake=2 fwd=0 ldmiss=16 icrefill=0
+RES div_6_1 5255 1612
+PROBE f1clr=1241 f2clr=19 f4clr=13 f1red=1669 f2red=1392 misp=2 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=2 fwd=0 ldmiss=18 icrefill=0
+RES div_2_2 3266 1612
+PROBE f1clr=1237 f2clr=13 f4clr=6 f1red=1738 f2red=1253 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=25 ldretry=0 ldwake=2 fwd=0 ldmiss=18 icrefill=0
+RES div_0_0 3256 1612
+PROBE f1clr=9751 f2clr=37 f4clr=6 f1red=10517 f2red=1669 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=25 ldretry=0 ldwake=2 fwd=0 ldmiss=18 icrefill=0
+RES div_1_20 21291 1612
+PROBE f1clr=1936 f2clr=52 f4clr=15 f1red=2312 f2red=1337 misp=3 flush=4 sfb0=0 sfb1=0 ldinc=32 ldretry=0 ldwake=2 fwd=0 ldmiss=20 icrefill=0
+RES div_40_38 4664 1612
+PROBE f1clr=9015 f2clr=44 f4clr=6 f1red=9381 f2red=1598 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=29 ldretry=0 ldwake=2 fwd=0 ldmiss=15 icrefill=0
+RES div_neg_pos 19687 1612
+PROBE f1clr=8998 f2clr=36 f4clr=6 f1red=9392 f2red=1612 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=2 fwd=0 ldmiss=18 icrefill=0
+RES div_pos_neg 19687 1612
+PROBE f1clr=9252 f2clr=12 f4clr=6 f1red=9695 f2red=1527 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES div_neg_neg 19286 1612
+PROBE f1clr=12952 f2clr=36 f4clr=6 f1red=13346 f2red=1831 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES div_by_zero 28108 1612
+PROBE f1clr=13642 f2clr=19 f4clr=6 f1red=14073 f2red=1673 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES div_zero_num 28108 1612
+PROBE f1clr=13683 f2clr=34 f4clr=10 f1red=14091 f2red=1687 misp=3 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=2 fwd=0 ldmiss=18 icrefill=0
+RES divu_63_1 28116 1612
+PROBE f1clr=8618 f2clr=37 f4clr=6 f1red=9032 f2red=1620 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES divu_40_1 18885 1612
+PROBE f1clr=9053 f2clr=17 f4clr=10 f1red=9494 f2red=1607 misp=3 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES rem_40_1 18893 1612
+PROBE f1clr=8997 f2clr=37 f4clr=6 f1red=9389 f2red=1636 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES rem_neg_pos 19687 1612
+PROBE f1clr=7453 f2clr=17 f4clr=10 f1red=7910 f2red=1564 misp=3 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=2 fwd=0 ldmiss=18 icrefill=0
+RES remu_40_10 15685 1612
+PROBE f1clr=7047 f2clr=17 f4clr=10 f1red=7507 f2red=1553 misp=3 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES divw_30_1 14883 1612
+PROBE f1clr=7109 f2clr=36 f4clr=6 f1red=7505 f2red=1545 misp=1 flush=4 sfb0=0 sfb1=0 ldinc=28 ldretry=0 ldwake=1 fwd=0 ldmiss=11 icrefill=0
+RES divw_neg 15677 1612
+PROBE f1clr=16915 f2clr=394 f4clr=12 f1red=22585 f2red=19209 misp=4 flush=4 sfb0=0 sfb1=0 ldinc=6028 ldretry=0 ldwake=21015 fwd=15002 ldmiss=6010 icrefill=0
+RES sl_chain2 45079 36010
+PROBE f1clr=779 f2clr=389 f4clr=8 f1red=6456 f2red=6064 misp=2 flush=4 sfb0=0 sfb1=0 ldinc=6028 ldretry=0 ldwake=1 fwd=6000 ldmiss=11 icrefill=0
+RES sl_indep 12804 30010
+PROBE f1clr=14277 f2clr=388 f4clr=8 f1red=19929 f2red=19052 misp=2 flush=4 sfb0=0 sfb1=0 ldinc=6028 ldretry=0 ldwake=16122 fwd=10993 ldmiss=6010 icrefill=0
+RES sl_word 39913 30010
+DONE
+- LargeBoomP.sv:312124: Verilog $finish
