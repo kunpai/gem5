@@ -1,0 +1,26 @@
+
+== load_indep_l2: 769 traced cycles; loads fired 86, wakeup retries 431, responses 71, refusals 396, bus requests 68, data beats 262, release beats 0, store commits 1
+   miss handler occupancy: 65 misses; no writeback: n=65 mean 35.5 cycles; with victim writeback: n=0 mean 0.0 cycles
+   mean cycles per state: refill_req 1.0, refill_resp 9.6, drain_loads 7.8, meta_read 1.0, meta_resp1 1.0, meta_resp2 1.0, commit_line 10.1, drain_rpq 1.0, meta_write 1.0, finish1 1.0, finish2 1.0
+   handlers busy: mean 3.00, max 4
+   refusals by cause (victim,writeback,probe flags): 000:396   (000 = no free handler)
+   interval between retries of the same load entry: 4 cycles x277, 3 cycles x53, 5 cycles x35, 6 cycles x7
+
+== load_dep_l2: 977 traced cycles; loads fired 61, wakeup retries 2, responses 47, refusals 43, bus requests 45, data beats 170, release beats 0, store commits 1
+   miss handler occupancy: 42 misses; no writeback: n=42 mean 23.2 cycles; with victim writeback: n=0 mean 0.0 cycles
+   mean cycles per state: refill_req 1.0, refill_resp 9.0, drain_loads 2.2, meta_read 1.0, meta_resp1 1.0, meta_resp2 1.0, commit_line 4.0, drain_rpq 1.0, meta_write 1.0, finish1 1.0, finish2 1.0
+   handlers busy: mean 1.00, max 2
+   refusals by cause (victim,writeback,probe flags): 000:43   (000 = no free handler)
+
+== store_l2: 1364 traced cycles; loads fired 21, wakeup retries 2, responses 71, refusals 604, bus requests 69, data beats 334, release beats 272, store commits 1117
+   miss handler occupancy: 68 misses; no writeback: n=0 mean 0.0 cycles; with victim writeback: n=68 mean 67.3 cycles
+   mean cycles per state: refill_req 1.0, refill_resp 9.0, drain_loads 1.2, meta_read 1.0, meta_resp1 1.0, meta_resp2 1.0, meta_clear 1.0, wb_req 36.7, wb_resp 6.4, commit_line 5.3, drain_rpq 2.3, meta_write 1.0, finish1 1.0, finish2 1.0
+   handlers busy: mean 3.35, max 4
+   refusals by cause (victim,writeback,probe flags): 100:272, 000:332   (000 = no free handler)
+
+== copy_l2: 1637 traced cycles; loads fired 85, wakeup retries 554, responses 135, refusals 892, bus requests 132, data beats 580, release beats 248, store commits 834
+   miss handler occupancy: 129 misses; no writeback: n=67 mean 32.3 cycles; with victim writeback: n=62 mean 55.1 cycles
+   mean cycles per state: refill_req 1.0, refill_resp 10.2, drain_loads 4.0, meta_read 1.4, meta_resp1 1.0, meta_resp2 1.0, meta_clear 1.0, wb_req 17.1, wb_resp 6.9, commit_line 8.1, drain_rpq 1.6, meta_write 1.0, finish1 1.0, finish2 1.0
+   handlers busy: mean 3.41, max 4
+   refusals by cause (victim,writeback,probe flags): 000:643, 100:248, 010:1   (000 = no free handler)
+   interval between retries of the same load entry: 4 cycles x253, 3 cycles x155, 5 cycles x46, 6 cycles x15

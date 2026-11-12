@@ -63,4 +63,32 @@ for c in range(width):
                 f" if ({ON} && pv_{c}_{r} && !{val} && !(io_commit_valids_{c} && rob_head == {r})) $fdisplay({FD}, \"X %0d {idx}\", {CY}); end")
     add += f"\n  always @(posedge clock) if ({ON} && io_commit_valids_{c}) $fdisplay({FD}, \"R %0d %0d\", {CY}, (rob_head << {lsb}) | {c});"
 s = s[:j] + add + s[j:]
+
+# --- memory side: load/store unit, miss handlers, writeback unit, cache bus ---
+T = "TestHarness.chiptop0.system.tile_prci_domain.element_reset_domain_boom_tile"
+def opt(name, items):
+    """items: (fmt, args, condition) where every identifier in condition/args must be declared"""
+    global s
+    i, j = modspan(name); body = s[i:j]; out = ""
+    for fmt, args, cond in items:
+        ids = set(re.findall(r"[A-Za-z_]\w*", cond + " " + args)) - {"io_id"}
+        ids = {x for x in ids if not x[0].isdigit()}
+        if all(declared(body, x) for x in ids if x not in ("d",)):
+            a = (", " + args) if args else ""
+            out += f"\n  always @(posedge clock) if ({ON} && ({cond})) $fdisplay({FD}, \"{fmt}\", {CY}{a});"
+        else:
+            print("  skip", name, fmt, [x for x in ids if not declared(body, x)])
+    s = s[:j] + out + s[j:]
+opt("LSU", [("LI %0d %0d %0d", "io_core_exe_0_req_bits_uop_ldq_idx, io_core_exe_0_req_bits_uop_rob_idx", "will_fire_load_incoming_0_will_fire"),
+            ("LW %0d %0d", "ldq_wakeup_idx", "will_fire_load_wakeup_0_will_fire"),
+            ("LS %0d", "", "will_fire_store_commit_0_will_fire"),
+            ("LR %0d %0d", "io_dmem_resp_0_bits_uop_ldq_idx", "io_dmem_resp_0_valid")])
+opt("BoomNonBlockingDCache", [("N %0d %0d%0d%0d", "s2_nack_victim_0, s2_nack_wb_0, s2_nack_hit_0", "s2_nack_0"),
+                              ("A %0d", "", "auto_out_a_valid"),
+                              ("G %0d", "", "auto_out_d_valid && auto_out_d_ready"),
+                              ("K %0d", "", "auto_out_c_valid && auto_out_c_ready")])
+i, j = modspan("BoomMSHR")
+s = s[:j] + f"\n  reg [4:0] pst; always @(posedge clock) begin pst <= state; if ({ON} && pst != state) $fdisplay({FD}, \"M %0d %0d %0d\", {CY}, io_id, state); end" + s[j:]
+i, j = modspan("BoomWritebackUnit")
+s = s[:j] + f"\n  reg [3:0] pst; always @(posedge clock) begin pst <= state; if ({ON} && pst != state) $fdisplay({FD}, \"W %0d %0d\", {CY}, state); end" + s[j:]
 open(dst, "w").write(s); print("trace probes added:", dst, "rob entries", n)

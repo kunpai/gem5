@@ -102,6 +102,13 @@ BaseCache::BaseCache(const BaseCacheParams &p, unsigned blk_size)
       forwardLatency(p.tag_latency),
       fillLatency(p.data_latency),
       responseLatency(p.response_latency),
+      missHandlers(p.miss_handlers),
+      missHandlerTail(p.miss_handler_tail),
+      missHandlerWriteback(p.miss_handler_writeback),
+      missHandlerWritebackBusy(p.miss_handler_writeback_busy > Cycles(0) ?
+          p.miss_handler_writeback_busy : p.miss_handler_writeback),
+      missHandlerFill(p.miss_handler_fill),
+      missHandlerRetry(p.miss_handler_retry),
       sequentialAccess(p.sequential_access),
       numTarget(p.tgts_per_mshr),
       forwardSnoops(true),
@@ -610,6 +617,46 @@ BaseCache::recvTimingResp(PacketPtr pkt)
         ppFill->notify(CacheAccessProbeArg(pkt, accessor));
     }
 
+    // The handler stays busy after the data is back: fixed tail, plus the
+    // victim writeback (one at a time) if a dirty block was evicted.
+    if (missHandlers && handlerOwners.erase(mshr)) {
+        Tick done = clockEdge(missHandlerTail);
+        // Only a dirty victim needs the writeback unit; a clean eviction
+        // also appears in the list (as a CleanEvict notification).
+        bool dirty_victim = false;
+        for (const auto &wb_pkt : writebacks) {
+            dirty_victim |= wb_pkt->cmd == MemCmd::WritebackDirty;
+        }
+        if (dirty_victim && missHandlerWriteback > Cycles(0)) {
+            const Tick start = std::max(clockEdge(), writebackUnitFree);
+            writebackUnitFree =
+                start + cyclesToTicks(missHandlerWritebackBusy);
+            done = start + cyclesToTicks(missHandlerWriteback) +
+                cyclesToTicks(missHandlerTail);
+        }
+        if (missHandlerFill > Cycles(0)) {
+            const Tick fill_start = std::max(done, fillUnitFree);
+            fillUnitFree = fill_start + cyclesToTicks(missHandlerFill);
+            done = fillUnitFree;
+        }
+        // Until the handler has finished, the line is not in the data
+        // array yet: accesses that arrive meanwhile wait for it. (Requests
+        // already queued on this miss are served from the response.)
+        if (blk && blk->isValid() && done > blk->getWhenReady()) {
+            blk->setWhenReady(done);
+        }
+        schedule(new EventFunctionWrapper(
+                     [this]() {
+                         assert(handlersBusy > 0);
+                         --handlersBusy;
+                         handlerRetryUntil = clockEdge(missHandlerRetry);
+                         schedMemSideSendEvent(
+                             std::max(curTick(), handlerRetryUntil));
+                     },
+                     name() + ".missHandlerRelease", true),
+                 done);
+    }
+
     // Don't want to promote the Locked RMW Read until
     // the locked write comes in
     if (!mshr->hasLockedRMWReadTarget()) {
@@ -909,6 +956,13 @@ BaseCache::getNextQueueEntry()
     // simply be that it is not ready
     MSHR *miss_mshr  = mshrQueue.getNext();
     WriteQueueEntry *wq_entry = writeBuffer.getNext();
+
+    // All miss handlers are busy (or a freed one is not usable yet): the
+    // miss stays queued.
+    if (missHandlers && miss_mshr &&
+        (handlersBusy >= missHandlers || curTick() < handlerRetryUntil)) {
+        miss_mshr = nullptr;
+    }
 
     // If we got a write buffer request ready, first priority is a
     // full write buffer, otherwise we favour the miss requests
@@ -1912,8 +1966,13 @@ BaseCache::invalidateVisitor(CacheBlk &blk)
 Tick
 BaseCache::nextQueueReadyTime() const
 {
-    Tick nextReady = std::min(mshrQueue.nextReadyTime(),
-                              writeBuffer.nextReadyTime());
+    Tick mshr_ready = mshrQueue.nextReadyTime();
+    if (missHandlers) {
+        // A handler release reschedules the send event itself.
+        mshr_ready = handlersBusy >= missHandlers ? MaxTick :
+            std::max(mshr_ready, handlerRetryUntil);
+    }
+    Tick nextReady = std::min(mshr_ready, writeBuffer.nextReadyTime());
 
     // Don't signal prefetch ready time if no MSHRs available
     // Will signal once enoguh MSHRs are deallocated
@@ -2010,6 +2069,10 @@ BaseCache::sendMSHRQueuePacket(MSHR* mshr)
         bool pending_modified_resp = !pkt->hasSharers() &&
             pkt->cacheResponding();
         markInService(mshr, pending_modified_resp);
+
+        if (missHandlers && handlerOwners.insert(mshr).second) {
+            ++handlersBusy;
+        }
 
         if (pkt->isClean() && blk && blk->isSet(CacheBlk::DirtyBit)) {
             // A cache clean opearation is looking for a dirty

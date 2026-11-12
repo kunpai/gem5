@@ -51,6 +51,28 @@ Every committed instruction matched one-to-one in all traced kernels. Example ti
 | S15 | There is one memory issue port. A store issues through it twice when its address and data become ready at different times. | trace of insertion sort on LargeBoom: memory queue never issues more than 1 uop per cycle and is 83% busy | adopted for LargeBoom as a single load/store functional unit (held-out mean 9.7% to 8.8%, stencil -40% to -32%). The double issue of stores is not modelled. On SmallBoom the shared unit makes the store-to-load chain 20% too slow, so it is not applied there. |
 | S16 | Dependents of a load are issued speculatively assuming a hit and re-issued if the value is late. With a late-data forward, the re-issue comes 4 or 8 cycles after the store data issues, alternating. | trace of the store-to-load chain on LargeBoom | observed, not modelled. The constant forwarding delay matches the average only. |
 
+## Specs from memory-side traces and dcache.scala / mshrs.scala
+
+`trace_sv.py` also logs load fires, retries and responses, cache refusals, bus beats, and every
+state change of the miss handlers and the writeback unit; `memview.py` summarises them
+(`results/traces/memory_*.txt`).
+
+| ID | Spec | Evidence (Small / Large) | gem5 model |
+|----|------|--------------------------|-----------|
+| S17 | A miss handler stays busy after the data has arrived: serve queued loads, read victim metadata (3 states), copy the line into the data array one row per cycle, replay stores, write metadata, two finish states. | occupancy 32 / 23 cycles for an L2 hit, of which 16 / 12 are before the data is usable; rows = 8 / 4 follow the bus width | `miss_handlers`, `miss_handler_tail` |
+| S18 | The copy into the data array is one shared port: handlers queue for it. | commit phase 8 / 4 cycles alone, 12 / 10 under contention | `miss_handler_fill` (serialised) |
+| S19 | A dirty victim is written back inside the handler through a single writeback unit, which stays busy longer than it holds the handler. | handler waits 11 / 6 cycles, unit busy 24 / 18; on LargeBoom's store stream handlers queue 37 cycles for it | `miss_handler_writeback`, `miss_handler_writeback_busy` |
+| S20 | Until its handler finishes, a refilled line is not in the data array: later accesses to it wait. | sequential access (stencil) pays the handler tail on every new line | block `whenReady` set to handler completion |
+| S21 | A refused load is retried about every 4 cycles; a freed handler is reused 3 to 6 cycles later. | retry interval mode 4; idle gap mean 3.2 to 5.8 | `miss_handler_retry` |
+
+Values are read from the trace, not fitted to cycle totals. Effect: LargeBoom held-out 8.8% to
+7.7% (stencil -32% to -20%), SmallBoom held-out 4.2% to 4.7% (the FP workload gets worse, +12%
+to +22%), fitted suites 3.7% to 3.9% and 4.9% to 5.1%. The model is still too permissive for
+independent L2-hit loads (-16% / -23%; the S9 check now fails on LargeBoom): in the RTL the
+handlers run in waves and sit idle part of the time (3.0 of 4 busy on average), which the
+model does not reproduce. The earlier halved-MSHR fit matched that one benchmark better but had
+no mechanism behind it.
+
 The call/return gap on SmallBoom (-25%) is a front-end effect: dispatch stalls about 3 cycles
 per iteration after jumps. The tracer does not yet log the fetch stages, so the rule is unknown.
 

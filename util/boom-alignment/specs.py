@@ -79,7 +79,7 @@ def run_gem5(c, extra, tag):
     r = cmp.run(c, extra, tag=tag); r.update(cmp.run(c, extra, tag=tag + "s2", suite="2")); return r
 
 if __name__ == "__main__":
-    models = [("BOOM RTL", None), ("gem5 stock", []), ("gem5 +params", ["--tuned", "--t", "diveo=0", "--t", "div=69", "--t", "fwd=0", "--t", "lob=0"]),
+    models = [("BOOM RTL", None), ("gem5 stock", []), ("gem5 +params", ["--tuned", "--t", "diveo=0", "--t", "div=69", "--t", "fwd=0", "--t", "lob=0", "--t", "mh=0", "--t", "dcs=4", "--t", "memfu=2"]),
               ("gem5 +patches", ["--tuned"])]
     rows = {}
     for c in ("small", "large"):

@@ -103,6 +103,36 @@ class BaseCache(ClockedObject):
     tgts_per_mshr = Param.Unsigned("Max number of accesses per MSHR")
     write_buffers = Param.Unsigned(8, "Number of write buffers")
 
+    # Miss-handler occupancy model. In some designs the unit that handles a
+    # miss stays busy after the data has arrived (victim metadata, victim
+    # writeback, copying the line into the data array), and a new miss
+    # cannot be sent out until a unit is free. 0 handlers disables this.
+    miss_handlers = Param.Unsigned(
+        0, "Miss requests that may be outstanding or finishing at once"
+    )
+    miss_handler_tail = Param.Cycles(
+        0, "Cycles a miss handler stays busy after its response arrives"
+    )
+    miss_handler_fill = Param.Cycles(
+        0,
+        "Cycles to copy the line into the data array; this step is "
+        "serialised across handlers (one shared port)",
+    )
+    miss_handler_writeback = Param.Cycles(
+        0,
+        "Extra cycles when the fill evicts a dirty block; writebacks are "
+        "serialised through one writeback unit",
+    )
+    miss_handler_writeback_busy = Param.Cycles(
+        0,
+        "Cycles the writeback unit itself is busy per dirty eviction (it "
+        "keeps sending the victim after the handler has moved on); 0 = same "
+        "as miss_handler_writeback",
+    )
+    miss_handler_retry = Param.Cycles(
+        0, "Cycles before a waiting miss is sent after a handler frees up"
+    )
+
     is_read_only = Param.Bool(False, "Is this cache read only (e.g. inst)")
 
     prefetcher = Param.BasePrefetcher(NULL, "Prefetcher attached to cache")

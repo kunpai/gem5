@@ -17,8 +17,8 @@ args = ap.parse_args()
 
 _COMMON = dict(mul=6, div=4, diveo=1, fadd=7, fmul=7, fdiv=23, l1i=1, l1d=3, l1resp=1, l2resp=1, mem="2ns", r2i=3, fwd=3, lob=1, dcs=0)
 TUNED = {   # fitted against BOOM v3 RTL (see cmp.py); fwd needs the LSQForwardDelay patch
-    "small": dict(_COMMON, l2=12, l1mshr=1, f2d=2),
-    "large": dict(_COMMON, l2=10, l1mshr=2, f2d=4, memfu=1),
+    "small": dict(_COMMON, l2=12, l1mshr=1, f2d=2, mh=2, mht=9, mhf=8, mhw=13, mhb=24, mhr=4),
+    "large": dict(_COMMON, l2=10, l1mshr=2, f2d=4, memfu=1, mh=4, mht=9, mhf=4, mhw=8, mhb=18, mhr=4),
 }
 
 P = {
@@ -32,7 +32,7 @@ P = {
 # Latencies. "default" = what a user gets by copying structure sizes only.
 T = dict(mul=3, div=20, fadd=2, fmul=4, fdiv=12, l1i=2, l1d=2, l2=10, mem="30ns",
          f2d=1, d2r=1, r2i=2, i2e=1, l2mshr=8, l1mshr=P["mshr"], l1resp=None, l2resp=None, l2w=32, memw=16,
-         l2busf=1, l2busr=1, diveo=0, fwd=0, lob=0, sta=0, retry=1, mdp=1, dcs=4, memfu=2, link=0)
+         l2busf=1, l2busr=1, diveo=0, fwd=0, lob=0, sta=0, retry=1, mdp=1, dcs=4, memfu=2, link=0, mh=0, mht=0, mhw=0, mhr=0, mhb=0, mhf=0)
 if args.tuned:
     T.update(TUNED[args.cfg])
 for kv in args.t:
@@ -111,6 +111,16 @@ def L1(lat, **kw):
 
 cpu.icache = L1(T["l1i"], size=P["l1i"], assoc=P["l1i_assoc"], mshrs=2)
 cpu.dcache = L1(T["l1d"], size=P["l1d"], assoc=P["l1d_assoc"], mshrs=T["l1mshr"])
+if T["mh"]:
+    # miss-handler occupancy model: the queue of waiting misses is deep (the LSU holds them in
+    # BOOM); what is limited is how many handlers are outstanding or finishing
+    cpu.dcache.mshrs = 16
+    cpu.dcache.miss_handlers = T["mh"]
+    cpu.dcache.miss_handler_tail = T["mht"]
+    cpu.dcache.miss_handler_writeback = T["mhw"]
+    cpu.dcache.miss_handler_retry = T["mhr"]
+    cpu.dcache.miss_handler_writeback_busy = T["mhb"]
+    cpu.dcache.miss_handler_fill = T["mhf"]
 cpu.LSQForwardDelay = T["fwd"]
 cpu.LSQResolveStoreAddrEarly = bool(T["sta"])
 cpu.LSQStoreDataRetryDelay = T["retry"]

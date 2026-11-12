@@ -48,7 +48,7 @@ static void put_dec(u64 v) {
 
 struct bench { const char *name; kfn fn; u64 wn, n, base, stride, mask; };
 #define K4(x) extern void x(u64, u64, u64, u64);
-K4(k_sl_chain2) K4(k_sl_indep) K4(w_isort_tr)
+K4(k_sl_chain2) K4(k_sl_indep) K4(w_isort_tr) K4(k_copy)
 static const struct bench B[] = {
   /* short traced runs: warm-up first, then a few dozen traced iterations */
   {"store_load", k_store_load, 300, 40, STK, 0, 0},
@@ -60,6 +60,11 @@ static const struct bench B[] = {
   {"load_dep_l1",k_load_dep,   1000, 40, L1REG, 72, 0xfff},
   {"alu_indep",  k_alu_indep,  200, 30, 0, 0, 0},
   {"isort",      w_isort_tr,   40, 40, 0x81400000UL, 0, 0},
+  /* memory side: all of these miss L1 and hit L2 after the warm-up passes */
+  {"load_indep_l2", k_load_indep, 4096, 64, L2REG, 1088, 0x1ffff},
+  {"load_dep_l2",   k_load_dep,   4096, 40, L2REG, 1088, 0x1ffff},
+  {"store_l2",      k_store_stream, 4096, 64, L2REG, 1088, 0x1ffff},
+  {"copy_l2",       k_copy,       4096, 64, 0x81300000UL, 64, 0xffff},
 };
 
 int main(void) {

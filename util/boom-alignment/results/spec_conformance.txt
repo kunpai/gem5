@@ -7,10 +7,10 @@ S5                 pass               pass               pass               FAIL
 S6                 pass               pass               pass               pass               pass               pass               pass               pass
 S7                 pass               pass               pass               FAIL               pass               FAIL               pass               pass
 S8                 pass               pass               pass               FAIL               pass               FAIL               pass               pass
-S9                 pass               pass               FAIL               FAIL               pass               pass               pass               pass
+S9                 pass               pass               FAIL               FAIL               pass               pass               pass               FAIL
 S10                pass               pass               FAIL               FAIL               pass               pass               pass               pass
 S11                pass               pass               FAIL               FAIL               pass               pass               pass               pass
 BOOM RTL: 22/22 spec checks pass
 gem5 stock: 7/22 spec checks pass
 gem5 +params: 18/22 spec checks pass
-gem5 +patches: 22/22 spec checks pass
+gem5 +patches: 21/22 spec checks pass

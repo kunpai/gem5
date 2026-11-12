@@ -48,6 +48,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <unordered_set>
 #include <string>
 
 #include "base/addr_range.hh"
@@ -352,6 +353,19 @@ class BaseCache : public ClockedObject
 
     /** Write/writeback buffer */
     WriteQueue writeBuffer;
+
+    /** Miss-handler occupancy model (see Cache.py). */
+    const unsigned missHandlers;
+    const Cycles missHandlerTail;
+    const Cycles missHandlerWriteback;
+    const Cycles missHandlerWritebackBusy;
+    const Cycles missHandlerFill;
+    Tick fillUnitFree = 0;
+    const Cycles missHandlerRetry;
+    unsigned handlersBusy = 0;
+    Tick writebackUnitFree = 0;
+    Tick handlerRetryUntil = 0;
+    std::unordered_set<MSHR *> handlerOwners;
 
     /** Tag and data Storage */
     BaseTags *tags;

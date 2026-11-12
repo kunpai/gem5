@@ -1,6 +1,6 @@
 import sys, statistics as st, cmp
 W = cmp.W
-stages = [("baseline (sizes only)", []), ("+ parameters", ["--tuned", "--t", "diveo=0", "--t", "div=69", "--t", "fwd=0", "--t", "lob=0"]), ("+ code patches", ["--tuned"])]
+stages = [("baseline (sizes only)", []), ("+ parameters", ["--tuned", "--t", "diveo=0", "--t", "div=69", "--t", "fwd=0", "--t", "lob=0", "--t", "mh=0", "--t", "dcs=4", "--t", "memfu=2"]), ("+ code patches", ["--tuned"])]
 for cfg in sys.argv[1:]:
     B = cmp.rd(f"{W}/results3_boom_{cfg}.txt"); cols = []
     for i, (name, extra) in enumerate(stages):
