@@ -232,6 +232,27 @@ class Queue : public Drainable, public Named
     }
 
     /**
+     * Returns one of the ready requests without regard to age: the
+     * (pick mod n)-th of the n ready ones.
+     */
+    Entry* getNextUnordered(unsigned pick) const
+    {
+        unsigned n = 0;
+        for (const auto &e : readyList) {
+            if (e->readyTime <= curTick())
+                ++n;
+        }
+        if (n == 0)
+            return nullptr;
+        unsigned k = pick % n;
+        for (const auto &e : readyList) {
+            if (e->readyTime <= curTick() && k-- == 0)
+                return e;
+        }
+        return nullptr;
+    }
+
+    /**
      * Removes the given entry from the queue. This places the entry
      * on the free list.
      *

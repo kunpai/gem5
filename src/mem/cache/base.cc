@@ -108,6 +108,7 @@ BaseCache::BaseCache(const BaseCacheParams &p, unsigned blk_size)
       missHandlerWritebackBusy(p.miss_handler_writeback_busy > Cycles(0) ?
           p.miss_handler_writeback_busy : p.miss_handler_writeback),
       missHandlerFill(p.miss_handler_fill),
+      missHandlerUnordered(p.miss_handler_unordered),
       missHandlerRetry(p.miss_handler_retry),
       sequentialAccess(p.sequential_access),
       numTarget(p.tgts_per_mshr),
@@ -956,6 +957,14 @@ BaseCache::getNextQueueEntry()
     // simply be that it is not ready
     MSHR *miss_mshr  = mshrQueue.getNext();
     WriteQueueEntry *wq_entry = writeBuffer.getNext();
+
+    if (missHandlers && missHandlerUnordered && miss_mshr) {
+        // xorshift: deterministic, but uncorrelated with request age
+        handlerPick ^= handlerPick << 13;
+        handlerPick ^= handlerPick >> 17;
+        handlerPick ^= handlerPick << 5;
+        miss_mshr = mshrQueue.getNextUnordered(handlerPick);
+    }
 
     // All miss handlers are busy (or a freed one is not usable yet): the
     // miss stays queued.

@@ -360,6 +360,8 @@ class BaseCache : public ClockedObject
     const Cycles missHandlerWriteback;
     const Cycles missHandlerWritebackBusy;
     const Cycles missHandlerFill;
+    const bool missHandlerUnordered;
+    unsigned handlerPick = 0x9e3779b9;
     Tick fillUnitFree = 0;
     const Cycles missHandlerRetry;
     unsigned handlersBusy = 0;

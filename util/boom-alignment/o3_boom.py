@@ -32,7 +32,7 @@ P = {
 # Latencies. "default" = what a user gets by copying structure sizes only.
 T = dict(mul=3, div=20, fadd=2, fmul=4, fdiv=12, l1i=2, l1d=2, l2=10, mem="30ns",
          f2d=1, d2r=1, r2i=2, i2e=1, l2mshr=8, l1mshr=P["mshr"], l1resp=None, l2resp=None, l2w=32, memw=16,
-         l2busf=1, l2busr=1, diveo=0, fwd=0, lob=0, sta=0, retry=1, mdp=1, dcs=4, memfu=2, link=0, mh=0, mht=0, mhw=0, mhr=0, mhb=0, mhf=0)
+         l2busf=1, l2busr=1, diveo=0, fwd=0, lob=0, sta=0, retry=1, mdp=1, dcs=4, memfu=2, link=0, mh=0, mht=0, mhw=0, mhr=0, mhb=0, mhf=0, mhu=0)
 if args.tuned:
     T.update(TUNED[args.cfg])
 for kv in args.t:
@@ -121,6 +121,7 @@ if T["mh"]:
     cpu.dcache.miss_handler_retry = T["mhr"]
     cpu.dcache.miss_handler_writeback_busy = T["mhb"]
     cpu.dcache.miss_handler_fill = T["mhf"]
+    cpu.dcache.miss_handler_unordered = bool(T["mhu"])
 cpu.LSQForwardDelay = T["fwd"]
 cpu.LSQResolveStoreAddrEarly = bool(T["sta"])
 cpu.LSQStoreDataRetryDelay = T["retry"]

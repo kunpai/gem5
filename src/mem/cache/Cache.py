@@ -129,6 +129,11 @@ class BaseCache(ClockedObject):
         "keeps sending the victim after the handler has moved on); 0 = same "
         "as miss_handler_writeback",
     )
+    miss_handler_unordered = Param.Bool(
+        False,
+        "A freed handler takes any waiting miss, not the oldest (models "
+        "designs where refused requests are retried on a timer)",
+    )
     miss_handler_retry = Param.Cycles(
         0, "Cycles before a waiting miss is sent after a handler frees up"
     )
