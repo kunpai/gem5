@@ -1,0 +1,18 @@
+
+===== call_ret (large): committed in kernel BOOM 364, gem5 364, same pc at same position 364/364
+cycles per committed instruction (middle half): BOOM 0.59  gem5 0.66
+       pc instruction                | BOOM: fetch disp issue(s)      done commit | gem5: fetch  dec  ren disp issue done commit
+ 80001264 addi ra,t5,0               |        -2    0             6   10     11 |        -8   -4   -3    0     0    1      3
+ 80001268 jalr zero,0(ra)            |        -2    0             7    .     11 |        -8   -4   -3    0     1    2      4
+ 8000124c addi a0,a0,-1              |         0    1             2    6     12 |        -7   -3   -2    1     1    2      4
+ 80001250 bne a0,zero,80001248 <k_ca |         0    1             3    7     12 |        -7   -3   -2    1     2    3      5
+ 80001248 jal ra,8000125c <k_call_re |         0    2             4    8     13 |        -6   -2   -1    2     2    3      5
+ 8000125c addi t5,ra,0               |         1    3             8   12     14 |        -5   -1    0    3     3    4      6
+ 80001260 jal ra,8000126c <k_call_re |         .    3             9   13     14 |        -4    0    1    4     4    5      7
+ 8000126c addi t4,t4,1               |         3    4             5    9     15 |        -3    1    2    5     5    6      8
+ 80001270 jalr zero,0(ra)            |         3    5            13    .     17 |        -3    1    2    5     5    6      8
+ 80001264 addi ra,t5,0               |         3    5             9   13     17 |        -2    2    3    6     6    7      9
+ 80001268 jalr zero,0(ra)            |         3    5            10   14     17 |        -2    2    3    6     7    8     10
+mean stage gaps  fetch->dispatch  dispatch->first issue  last issue->done  done->commit   issues per instruction
+   BOOM              1.63            3.75                4.02          3.95        1.00
+   gem5              8.00            0.23                1.00          2.00        1.00

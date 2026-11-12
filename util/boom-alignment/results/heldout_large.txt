@@ -1,34 +1,34 @@
 == held-out, large: cycle error vs BOOM RTL (baseline | +params | +patches)
-  qsort_cold     boom=  213970   -14.7%    -4.1%    -2.0%
-  qsort_warm     boom=  205222   -19.3%   -10.9%    -8.7%
+  qsort_cold     boom=  213970   -14.7%    -4.1%    -1.9%
+  qsort_warm     boom=  205222   -19.3%   -10.7%    -8.7%
   matmul_cold    boom=   49486    -9.0%   +74.7%   -17.1%
   matmul_warm    boom=   48988    -8.6%   +76.0%   -16.7%
   crc_cold       boom=   72838    -7.1%    -1.0%    -1.0%
   crc_warm       boom=   72761    -7.2%    -1.0%    -1.0%
-  list_cold      boom=  264342    -5.0%   +50.2%    -6.1%
-  list_warm      boom=  258996   -10.3%   +49.6%    -7.9%
+  list_cold      boom=  264342    -5.0%   +50.6%    -5.8%
+  list_warm      boom=  258996   -10.3%   +49.8%    -7.7%
   bsearch_cold   boom=  283370    -4.4%   +23.0%    -3.2%
   bsearch_warm   boom=  280481    -7.6%   +19.6%    -6.7%
   sieve_cold     boom=  114293   +37.7%    +0.4%    +0.4%
   sieve_warm     boom=  115470   +35.4%    -1.3%    -1.0%
-  fib_cold       boom=   22546   +14.5%   -11.2%    -9.1%
-  fib_warm       boom=   21648   +15.4%   -12.2%    -9.8%
+  fib_cold       boom=   22546   +14.5%    -5.8%    -5.3%
+  fib_warm       boom=   21648   +15.4%    -6.2%    -5.6%
   hash_cold      boom=   97809    -9.3%    -1.2%    -1.0%
   hash_warm      boom=   87087    -9.4%    -8.9%    -8.9%
-  str_cold       boom=  165321    -7.9%   +98.8%   -10.3%
+  str_cold       boom=  165321    -7.9%   +99.3%    -9.7%
   str_warm       boom=  164425    -7.6%   +99.7%    -9.9%
   fp_cold        boom=   59306   -30.6%   +11.5%   +11.5%
   fp_warm        boom=   57767   -30.6%    +8.4%    +8.4%
   gcd_cold       boom=   96595   +64.0%  +454.7%    +9.4%
   gcd_warm       boom=   96775   +60.5%  +446.7%    +0.6%
-  isort_cold     boom=   53868   +26.0%   -20.0%   -20.0%
-  isort_warm     boom=   53692   +25.5%   -20.5%   -20.4%
-  stencil_cold   boom=  615204    -6.9%   -37.8%   -37.8%
-  stencil_warm   boom=  586663   -35.9%   -39.9%   -39.9%
+  isort_cold     boom=   53868   +26.0%   -19.6%   -19.5%
+  isort_warm     boom=   53692   +25.5%   -20.1%   -19.9%
+  stencil_cold   boom=  615204    -6.9%   -30.0%   -30.0%
+  stencil_warm   boom=  586663   -35.9%   -32.0%   -32.0%
   bits_cold      boom=  121612    -3.6%    +0.3%    +0.6%
   bits_warm      boom=  121590    -4.2%    -0.4%    -0.3%
   interp_cold    boom=  259969   -16.9%   -11.2%   -10.7%
   interp_warm    boom=  255883   -16.3%   -10.7%   -10.3%
   baseline (sizes only)  mean|err|  18.4%  median 12.4%  max  64.0%  within10%: 14/30
-  + parameters           mean|err|  53.5%  median 11.8%  max 454.7%  within10%: 10/30
-  + code patches         mean|err|   9.7%  median  8.8%  max  39.9%  within10%: 20/30
+  + parameters           mean|err|  52.6%  median 11.3%  max 454.7%  within10%: 12/30
+  + code patches         mean|err|   8.8%  median  8.0%  max  32.0%  within10%: 21/30

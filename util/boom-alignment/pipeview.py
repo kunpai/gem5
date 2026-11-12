@@ -46,7 +46,8 @@ def boom_records(seg):
             if r and r["C"] is None: r["C"] = c
         elif k == "R":
             r = live.pop(int(e[2]), None)
-            if r: r["R"] = c; done.append(r)
+            if r: r["R"] = c; r["lane"] = int(e[2]) & (3 if BLK == 32 else 0); done.append(r)
+    done.sort(key=lambda r: (r["R"], r["lane"]))   # same-cycle commits print in arbitrary order
     return done
 
 # ---- gem5 ----

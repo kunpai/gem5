@@ -1,0 +1,17 @@
+
+===== br_pattern (small): committed in kernel BOOM 429, gem5 429, same pc at same position 429/429
+cycles per committed instruction (middle half): BOOM 1.02  gem5 1.00
+       pc instruction                | BOOM: fetch disp issue(s)      done commit | gem5: fetch  dec  ren disp issue done commit
+ 80001210 srl t1,t5,t0               |        -4    0             1    .      7 |       -13   -4   -3    0     0    1      3
+ 80001214 andi t1,t1,1               |        -4    1             2    .      8 |       -12   -3   -2    1     1    2      4
+ 80001218 beq t1,zero,80001220 <k_br |        -1    2             3    .      9 |       -11   -2   -1    2     2    3      5
+ 8000121c addi t4,t4,1               |         3    3             4    .     10 |        -9   -1    0    3     3    4      6
+ 80001220 addi t0,t0,1               |         0    4             5    .     11 |        -8    0    1    4     4    5      7
+ 80001224 bne t0,t3,8000122c <k_br_p |         0    5             6    .     12 |        -8    1    2    5     5    6      8
+ 8000122c addi a0,a0,-1              |         1    6             7    .     13 |        -7    2    3    6     6    7      9
+ 80001230 bne a0,zero,80001210 <k_br |         2    7             8    .     14 |        -6    3    4    7     7    8     10
+ 80001210 srl t1,t5,t0               |         3    8             9    .     15 |        -5    4    5    8     8    9     11
+ 80001214 andi t1,t1,1               |         3    9            10    .     16 |        -4    5    6    9     9   10     12
+mean stage gaps  fetch->dispatch  dispatch->first issue  last issue->done  done->commit   issues per instruction
+   BOOM              4.24            1.00                 nan           nan        1.00
+   gem5             12.83            0.00                1.00          2.00        1.00

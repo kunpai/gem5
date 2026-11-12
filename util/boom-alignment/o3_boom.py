@@ -18,7 +18,7 @@ args = ap.parse_args()
 _COMMON = dict(mul=6, div=4, diveo=1, fadd=7, fmul=7, fdiv=23, l1i=1, l1d=3, l1resp=1, l2resp=1, mem="2ns", r2i=3, fwd=3, lob=1, dcs=0)
 TUNED = {   # fitted against BOOM v3 RTL (see cmp.py); fwd needs the LSQForwardDelay patch
     "small": dict(_COMMON, l2=12, l1mshr=1, f2d=2),
-    "large": dict(_COMMON, l2=10, l1mshr=2, f2d=4),
+    "large": dict(_COMMON, l2=10, l1mshr=2, f2d=4, memfu=1),
 }
 
 P = {
@@ -32,7 +32,7 @@ P = {
 # Latencies. "default" = what a user gets by copying structure sizes only.
 T = dict(mul=3, div=20, fadd=2, fmul=4, fdiv=12, l1i=2, l1d=2, l2=10, mem="30ns",
          f2d=1, d2r=1, r2i=2, i2e=1, l2mshr=8, l1mshr=P["mshr"], l1resp=None, l2resp=None, l2w=32, memw=16,
-         l2busf=1, l2busr=1, diveo=0, fwd=0, lob=0, sta=0, retry=1, mdp=1, dcs=4)
+         l2busf=1, l2busr=1, diveo=0, fwd=0, lob=0, sta=0, retry=1, mdp=1, dcs=4, memfu=2, link=0)
 if args.tuned:
     T.update(TUNED[args.cfg])
 for kv in args.t:
@@ -88,8 +88,13 @@ class BoomStore(FUDesc):
     opList = [OpDesc(opClass="MemWrite"), OpDesc(opClass="FloatMemWrite")]
     count = 1
 
+class BoomMem(FUDesc):     # one memory port shared by loads and stores (LargeBoom mem issue width is 1)
+    opList = [OpDesc(opClass="MemRead"), OpDesc(opClass="FloatMemRead"),
+              OpDesc(opClass="MemWrite"), OpDesc(opClass="FloatMemWrite")]
+    count = 1
+
 class BoomFUPool(FUPool):
-    FUList = [BoomALU(), BoomMul(), BoomDiv(), BoomFP(), BoomFDiv(), BoomLoad(), BoomStore(), System_Unit()]
+    FUList = [BoomALU(), BoomMul(), BoomDiv(), BoomFP(), BoomFDiv()] + ([BoomMem()] if T["memfu"] == 1 else [BoomLoad(), BoomStore()]) + [System_Unit()]
 
 cpu.instQueues = [IQUnit(numEntries=P["iq"], fuPool=BoomFUPool())]
 
@@ -111,6 +116,7 @@ cpu.LSQResolveStoreAddrEarly = bool(T["sta"])
 cpu.LSQStoreDataRetryDelay = T["retry"]
 cpu.memDepPrediction = bool(T["mdp"])
 cpu.LSQDepCheckShift = T["dcs"]
+cpu.linkWriteLatency = T["link"]
 cpu.fetchLateOverrideBubbles = T["lob"]
 cpu.fetchToDecodeDelay, cpu.decodeToRenameDelay = T["f2d"], T["d2r"]
 cpu.renameToIEWDelay, cpu.issueToExecuteDelay = T["r2i"], T["i2e"]

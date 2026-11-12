@@ -26,8 +26,8 @@ gem5, 42.5% with fitted parameters alone, and 4.2% with parameters plus patches.
 fitting overfits wherever the true behaviour is a function (S3): the single divide latency that
 fits one operand pair is wrong for every other.
 
-On LargeBoom the same 30 runs give 18.4% stock, 53.5% parameters only, and 9.7% with patches
-and the byte-exact ordering check (S12). The stencil is still -38%: RTL counters show about
+On LargeBoom the same 30 runs give 18.4% stock, 53.5% parameters only, and 8.8% with patches,
+the byte-exact ordering check (S12) and the single memory port (S15). The stencil is still -38%: RTL counters show about
 119,000 load wakeups for 241,000 loads, i.e. the miss-retry behaviour behind S9, which is only
 approximated by a halved MSHR count.
 
@@ -37,6 +37,22 @@ approximated by a halved MSHR count.
 |----|------|-----------|--------|
 | S12 | Ordering violations are detected at byte granularity (doubleword match plus byte mask). | violates: `LSQDepCheckShift=4` compares 16-byte blocks, so neighbouring array elements raise false violations, which then train the store-set predictor to serialise the loop | fixed by parameter (`LSQDepCheckShift=0`); insertion sort on LargeBoom goes from +56% to -20% |
 | S13 | Loads never wait for a store by prediction. Store addresses resolve independently of store data; a load matching a store whose data is late stays un-executed and is re-fired every third cycle; a load passing a store with unknown address is flushed on a later match. | violates: address and data resolve together; loads wait on PC-indexed store sets | prototype (`LSQResolveStoreAddrEarly`, `memDepPrediction`) builds and is functionally correct but is NOT faithful yet: it retries 4 to 5 times per load where the RTL retries 2.7 times, and does not improve cycle error. Off by default and not part of the calibration. |
+
+## Specs found by lining up per-instruction pipeline traces
+
+`rtl-harness/trace_sv.py` logs fetch, dispatch, issue, completion and commit per ROB entry in
+the RTL; gem5's `commitPipeTrace` logs the same stages at commit; `pipeview.py` aligns them.
+Every committed instruction matched one-to-one in all traced kernels. Example timelines are in
+`results/traces/`.
+
+| ID | Spec | Evidence | Status |
+|----|------|----------|--------|
+| S14 | The link register written by JAL/JALR is not bypassed: a reader issues 6 cycles after the jump. | trace of call/return; `decode.scala` marks JAL/JALR not bypassable | real, but NOT the cause of the call/return gap. `linkWriteLatency` models it but also delays the jump's own resolution, which makes indirect-jump mispredicts 28 to 36% too slow. Not adopted. |
+| S15 | There is one memory issue port. A store issues through it twice when its address and data become ready at different times. | trace of insertion sort on LargeBoom: memory queue never issues more than 1 uop per cycle and is 83% busy | adopted for LargeBoom as a single load/store functional unit (held-out mean 9.7% to 8.8%, stencil -40% to -32%). The double issue of stores is not modelled. On SmallBoom the shared unit makes the store-to-load chain 20% too slow, so it is not applied there. |
+| S16 | Dependents of a load are issued speculatively assuming a hit and re-issued if the value is late. With a late-data forward, the re-issue comes 4 or 8 cycles after the store data issues, alternating. | trace of the store-to-load chain on LargeBoom | observed, not modelled. The constant forwarding delay matches the average only. |
+
+The call/return gap on SmallBoom (-25%) is a front-end effect: dispatch stalls about 3 cycles
+per iteration after jumps. The tracer does not yet log the fetch stages, so the rule is unknown.
 
 ## Not yet explained
 
