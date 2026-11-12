@@ -26,6 +26,12 @@ gem5, 42.5% with fitted parameters alone, and 4.2% with parameters plus patches.
 fitting overfits wherever the true behaviour is a function (S3): the single divide latency that
 fits one operand pair is wrong for every other.
 
+On LargeBoom the same 30 runs give 18.4% stock, 55.9% parameters only, 11.9% with patches.
+Two workloads show that a fix does not generalise: insertion sort is +56% because the constant
+`LSQForwardDelay` charges every forwarded load, while the RTL (S8) only penalises loads whose
+store data arrives late; the stencil is -38%, a store-heavy pattern over 320 KiB that no spec
+here covers yet.
+
 ## Not yet explained
 
 Call/return on SmallBoom (-25%), jump chain on LargeBoom (+26%), overlapping DRAM misses (+20%).
