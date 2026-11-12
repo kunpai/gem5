@@ -121,7 +121,7 @@ Commit::Commit(CPU *_cpu, const BaseO3CPUParams &params)
     if (!params.commitPipeTrace.empty()) {
         pipeTrace = new std::ofstream(params.commitPipeTrace);
         *pipeTrace << "# seq pc fetch decode rename dispatch issue complete "
-                      "commit (cycles) | disassembly\n";
+                      "commit writeback (cycles) | disassembly\n";
     }
 
     if (commitWidth > MaxWidth)
@@ -1297,7 +1297,8 @@ Commit::commitHead(const DynInstPtr &head_inst, unsigned inst_num)
                    << cyc(head_inst->dispatchTick) << " "
                    << cyc(head_inst->issueTick) << " "
                    << cyc(head_inst->completeTick) << " "
-                   << cyc(head_inst->commitTick) << " | "
+                   << cyc(head_inst->commitTick) << " "
+                   << cyc(head_inst->writebackTick) << " | "
                    << head_inst->staticInst->disassemble(
                           head_inst->pcState().instAddr())
                    << "\n";

@@ -5,7 +5,7 @@
   matmul_warm    boom=   48988    -8.6%   +76.0%   -16.7%
   crc_cold       boom=   72838    -7.1%    -1.0%    -1.0%
   crc_warm       boom=   72761    -7.2%    -1.0%    -1.0%
-  list_cold      boom=  264342    -5.0%   +50.3%    -1.6%
+  list_cold      boom=  264342    -5.0%   +50.3%    -1.5%
   list_warm      boom=  258996   -10.3%   +49.5%    +0.6%
   bsearch_cold   boom=  283370    -4.4%   +23.4%    -3.2%
   bsearch_warm   boom=  280481    -7.6%   +20.4%    -6.7%

@@ -1452,6 +1452,7 @@ IEW::writebackInsts()
         // when it's ready to execute the strictly ordered load.
         if (!inst->isSquashed() && inst->isExecuted() &&
                 inst->getFault() == NoFault) {
+            inst->writebackTick = curTick() - inst->fetchTick;
             int dependents = instQueue.wakeDependents(inst);
 
             for (int i = 0; i < inst->numDestRegs(); i++) {

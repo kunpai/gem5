@@ -5,8 +5,8 @@
   matmul_warm    boom=   69636    +0.3%   +58.3%    -5.8%
   crc_cold       boom=  120011    -5.5%    -4.8%    -0.9%
   crc_warm       boom=  119933    -6.1%    -4.9%    -0.9%
-  list_cold      boom=  360481   -13.7%   +39.2%    -1.5%
-  list_warm      boom=  354949   -25.7%   +35.9%    -3.3%
+  list_cold      boom=  360481   -13.7%   +39.2%    -1.2%
+  list_warm      boom=  354949   -25.7%   +35.9%    -3.0%
   bsearch_cold   boom=  335874    +0.7%   +21.3%    -1.9%
   bsearch_warm   boom=  331089    -4.5%   +19.7%    -3.9%
   sieve_cold     boom=  253366    +3.6%    -1.1%    -1.0%
@@ -31,4 +31,4 @@
   interp_warm    boom=  318934   -14.6%    -7.8%    -7.8%
   baseline (sizes only)  mean|err|   9.9%  median  6.3%  max  49.5%  within10%: 19/30
   + parameters           mean|err|  42.5%  median  8.0%  max 403.9%  within10%: 18/30
-  + code patches         mean|err|   4.7%  median  2.4%  max  22.3%  within10%: 26/30
+  + code patches         mean|err|   4.6%  median  2.4%  max  22.3%  within10%: 26/30

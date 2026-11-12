@@ -17,8 +17,8 @@ args = ap.parse_args()
 
 _COMMON = dict(mul=6, div=4, diveo=1, fadd=7, fmul=7, fdiv=23, l1i=1, l1d=3, l1resp=1, l2resp=1, mem="2ns", r2i=3, fwd=3, lob=1, dcs=0)
 TUNED = {   # fitted against BOOM v3 RTL (see cmp.py); fwd needs the LSQForwardDelay patch
-    "small": dict(_COMMON, l2=12, l1mshr=1, f2d=2, mh=2, mht=9, mhf=8, mhw=13, mhb=24, mhr=4),
-    "large": dict(_COMMON, l2=10, l1mshr=2, f2d=4, memfu=1, mh=4, mht=9, mhf=4, mhw=8, mhb=18, mhr=4),
+    "small": dict(_COMMON, l2=12, l1mshr=1, f2d=2, mh=2, mht=9, mhf=8, mhw=13, mhb=24, mhr=4, mhu=1),
+    "large": dict(_COMMON, l2=10, l1mshr=2, f2d=4, memfu=1, mh=4, mht=9, mhf=4, mhw=8, mhb=18, mhr=4, mhu=1),
 }
 
 P = {

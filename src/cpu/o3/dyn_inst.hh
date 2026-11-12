@@ -1005,6 +1005,7 @@ class DynInst : public ExecContext, public RefCounted
     int32_t issueTick = -1;
     int32_t completeTick = -1;
     int32_t commitTick = -1;
+    int32_t writebackTick = -1; // result written back, dependents woken
     int32_t storeTick = -1;
 
     /* Values used by LoadToUse stat */

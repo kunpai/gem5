@@ -65,6 +65,8 @@ state change of the miss handlers and the writeback unit; `memview.py` summarise
 | S20 | Until its handler finishes, a refilled line is not in the data array: later accesses to it wait. | sequential access (stencil) pays the handler tail on every new line | block `whenReady` set to handler completion |
 | S21 | A refused load is retried about every 4 cycles; a freed handler is reused 3 to 6 cycles later. | retry interval mode 4; idle gap mean 3.2 to 5.8 | `miss_handler_retry` |
 
+| S22 | Freed miss handlers are not given to the oldest waiting load. A refused load retries on a timer while a newly arriving load fires at once, so 33% (Small) / 69% (Large) of missing loads get their data while an older load is still waiting. | per-load response order in the RTL trace; `lsu.scala` wakeup logic | `miss_handler_unordered`: gem5 goes from 0% to 38% / 55% (mean older-waiting 0.50 / 1.62 against 0.45 / 1.53 in RTL). Reproduces the ordering but moves cycle counts by only about 3%, so it is not what makes independent L2 loads too fast. |
+
 Values are read from the trace, not fitted to cycle totals. Effect: LargeBoom held-out 8.8% to
 7.7% (stencil -32% to -20%), SmallBoom held-out 4.2% to 4.7% (the FP workload gets worse, +12%
 to +22%), fitted suites 3.7% to 3.9% and 4.9% to 5.1%. The model is still too permissive for
