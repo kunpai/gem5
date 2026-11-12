@@ -41,6 +41,7 @@
 #ifndef __CPU_O3_COMMIT_HH__
 #define __CPU_O3_COMMIT_HH__
 
+#include <fstream>
 #include <queue>
 
 #include "base/statistics.hh"
@@ -395,6 +396,9 @@ class Commit
 
     /** Commit width, in instructions. */
     const unsigned commitWidth;
+
+    /** Optional per-instruction pipeline timing trace. */
+    std::ofstream *pipeTrace = nullptr;
 
     /** Number of Active Threads */
     const ThreadID numThreads;

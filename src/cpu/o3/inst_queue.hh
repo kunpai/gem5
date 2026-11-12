@@ -323,6 +323,9 @@ class InstructionQueue
      */
     void scheduleReadyInsts();
 
+    /** Latency of link-register writes by jumps (0 = default). */
+    Cycles linkWriteLatency;
+
     /** Operand-dependent iteration count of an early-out divider. */
     unsigned earlyOutDividerCycles(const DynInstPtr &inst);
 

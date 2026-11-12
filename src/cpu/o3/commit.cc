@@ -118,6 +118,12 @@ Commit::Commit(CPU *_cpu, const BaseO3CPUParams &params)
       avoidQuiesceLiveLock(false),
       stats(_cpu, this)
 {
+    if (!params.commitPipeTrace.empty()) {
+        pipeTrace = new std::ofstream(params.commitPipeTrace);
+        *pipeTrace << "# seq pc fetch decode rename dispatch issue complete "
+                      "commit (cycles) | disassembly\n";
+    }
+
     if (commitWidth > MaxWidth)
         fatal("commitWidth (%d) is larger than compiled limit (%d),\n"
              "\tincrease MaxWidth in src/cpu/o3/limits.hh\n",
@@ -1277,6 +1283,25 @@ Commit::commitHead(const DynInstPtr &head_inst, unsigned inst_num)
     rob->retireHead(tid);
 
     head_inst->commitTick = curTick() - head_inst->fetchTick;
+
+    if (pipeTrace) {
+        const Tick p = cpu->clockPeriod();
+        const Tick f = head_inst->fetchTick;
+        auto cyc = [&](int32_t d) -> long long {
+            return d < 0 ? -1 : (long long)((f + d) / p);
+        };
+        *pipeTrace << head_inst->seqNum << " " << std::hex
+                   << head_inst->pcState().instAddr() << std::dec << " "
+                   << f / p << " " << cyc(head_inst->decodeTick) << " "
+                   << cyc(head_inst->renameTick) << " "
+                   << cyc(head_inst->dispatchTick) << " "
+                   << cyc(head_inst->issueTick) << " "
+                   << cyc(head_inst->completeTick) << " "
+                   << cyc(head_inst->commitTick) << " | "
+                   << head_inst->staticInst->disassemble(
+                          head_inst->pcState().instAddr())
+                   << "\n";
+    }
 
     if (head_inst->traceData) {
         head_inst->traceData->setFetchSeq(head_inst->seqNum);

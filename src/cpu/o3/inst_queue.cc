@@ -255,6 +255,8 @@ InstructionQueue::InstructionQueue(CPU *cpu_ptr, IEW *iew_ptr,
       iqStats(cpu, totalWidth),
       iqIOStats(cpu)
 {
+    linkWriteLatency = params.linkWriteLatency;
+
     const auto &reg_classes = params.isa[0]->regClasses();
     // Set the number of total physical registers
     // As the vector registers have two addressing modes, they are added twice
@@ -1063,6 +1065,13 @@ InstructionQueue::scheduleReadyInsts()
                         op_latency + earlyOutDividerCycles(issuing_inst));
                 }
             }
+
+            // A jump-and-link whose result is not bypassed: dependents of
+            // the link register see it only after linkWriteLatency.
+            if (linkWriteLatency > op_latency && issuing_inst->isControl() &&
+                issuing_inst->numDestRegs() > 0) {
+                op_latency = linkWriteLatency;
+            }
         }
 
         // If we have an instruction that doesn't require a FU, or a
@@ -1124,9 +1133,7 @@ InstructionQueue::scheduleReadyInsts()
             issuing_inst->setIssued();
             ++total_issued;
 
-#if TRACING_ON
             issuing_inst->issueTick = curTick() - issuing_inst->fetchTick;
-#endif
 
             if (issuing_inst->firstIssue == -1)
                 issuing_inst->firstIssue = curTick();

@@ -209,6 +209,17 @@ class BaseO3CPU(BaseCPU):
         "Branch Predictor",
     )
     needsTSO = Param.Bool(False, "Enable TSO Memory model")
+    linkWriteLatency = Param.Cycles(
+        0,
+        "Latency before the link register written by a jump-and-link is "
+        "visible to dependents (0 = same as the jump's op latency). Models "
+        "cores where jump results are not bypassed.",
+    )
+    commitPipeTrace = Param.String(
+        "",
+        "If set, write one line per committed instruction with the cycle "
+        "it passed each pipeline stage to this file",
+    )
     LSQResolveStoreAddrEarly = Param.Bool(
         False,
         "Stores resolve their address as soon as the base register is "
