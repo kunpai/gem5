@@ -239,6 +239,7 @@ LSQUnit::init(CPU *cpu_ptr, IEW *iew_ptr, const BaseO3CPUParams &params,
     depCheckShift = params.LSQDepCheckShift;
     checkLoads = params.LSQCheckLoads;
     needsTSO = params.needsTSO;
+    forwardDelay = params.LSQForwardDelay;
 
     resetState();
 }
@@ -1596,10 +1597,14 @@ LSQUnit::read(LSQRequest *request, ssize_t load_idx)
                 WritebackEvent *wb = new WritebackEvent(load_inst, data_pkt,
                         this);
 
-                // We'll say this has a 1 cycle load-store forwarding latency
-                // for now.
-                // @todo: Need to make this a parameter.
-                cpu->schedule(wb, curTick());
+                // Forwarding completes in the same cycle by default;
+                // LSQForwardDelay adds cycles for designs whose
+                // store-to-load forwarding path is slower.
+                if (forwardDelay == Cycles(0)) {
+                    cpu->schedule(wb, curTick());
+                } else {
+                    cpu->schedule(wb, cpu->clockEdge(forwardDelay));
+                }
 
                 // Don't need to do anything special for split loads.
                 ++stats.forwLoads;

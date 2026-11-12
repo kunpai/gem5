@@ -323,6 +323,9 @@ class InstructionQueue
      */
     void scheduleReadyInsts();
 
+    /** Operand-dependent iteration count of an early-out divider. */
+    unsigned earlyOutDividerCycles(const DynInstPtr &inst);
+
     /** Schedules a single specific non-speculative instruction. */
     void scheduleNonSpec(const InstSeqNum &inst);
 

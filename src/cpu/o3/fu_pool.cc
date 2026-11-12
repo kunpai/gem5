@@ -90,6 +90,7 @@ FUPool::FUPool(const Params &p)
     funcUnits.clear();
 
     maxOpLatencies.fill(Cycles(0));
+    earlyOutDivider.fill(false);
     pipelined.fill(true);
 
     //
@@ -121,6 +122,8 @@ FUPool::FUPool(const Params &p)
                 // indicate that this FU has the capability
                 fu->addCapability(j->opClass, j->opLat, j->pipelined);
 
+                if (j->earlyOutDivider)
+                    earlyOutDivider[j->opClass] = true;
                 if (j->opLat > maxOpLatencies[j->opClass])
                     maxOpLatencies[j->opClass] = j->opLat;
 

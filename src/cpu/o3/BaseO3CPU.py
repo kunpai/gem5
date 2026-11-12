@@ -209,6 +209,11 @@ class BaseO3CPU(BaseCPU):
         "Branch Predictor",
     )
     needsTSO = Param.Bool(False, "Enable TSO Memory model")
+    LSQForwardDelay = Param.Cycles(
+        0,
+        "Extra cycles before a load that is forwarded from the store queue "
+        "writes back",
+    )
 
     recvRespThrottling = Param.Bool(
         False, "Enable load receive response throttling in the LSQ"

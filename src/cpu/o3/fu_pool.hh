@@ -77,6 +77,8 @@ class FUPool : public SimObject
   private:
     /** Maximum op execution latencies, per op class. */
     std::array<Cycles, Num_OpClasses> maxOpLatencies;
+    /** Op classes served by an early-out iterative divider. */
+    std::array<bool, Num_OpClasses> earlyOutDivider;
     /** Whether op is pipelined or not. */
     std::array<bool, Num_OpClasses> pipelined;
 
@@ -192,6 +194,11 @@ class FUPool : public SimObject
     /** Returns the operation execution latency of the given capability. */
     Cycles getOpLatency(OpClass capability) {
         return maxOpLatencies[capability];
+    }
+
+    /** True if the latency of this capability depends on its operands. */
+    bool isEarlyOutDivider(OpClass capability) {
+        return earlyOutDivider[capability];
     }
 
     /** Returns the issue latency of the given capability. */

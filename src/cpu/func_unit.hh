@@ -71,10 +71,11 @@ class OpDesc : public SimObject
     OpClass opClass;
     Cycles opLat;
     bool pipelined;
+    bool earlyOutDivider;
 
     OpDesc(const OpDescParams &p)
         : SimObject(p), opClass(p.opClass), opLat(p.opLat),
-          pipelined(p.pipelined) {};
+          pipelined(p.pipelined), earlyOutDivider(p.earlyOutDivider) {};
 };
 
 class FUDesc : public SimObject

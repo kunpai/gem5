@@ -925,6 +925,57 @@ InstructionQueue::processFUCompletion(const DynInstPtr &inst, FUPool *fu_pool,
 // @todo: Figure out a better way to remove the squashed items from the
 // lists.  Checking the top item of each list to see if it's squashed
 // wastes time and forces jumps.
+/**
+ * Iteration count of a 64-bit radix-2 restoring divider with early-out
+ * (the rocket-chip MulDiv unit used by Rocket and BOOM). Operands are
+ * made positive first (one cycle if either is negative), the loop skips
+ * the leading zeros of the dividend relative to the divisor, and a
+ * negative result costs one more cycle. All sources are ready when an
+ * instruction is issued, so the operand values can be read here.
+ */
+unsigned
+InstructionQueue::earlyOutDividerCycles(const DynInstPtr &inst)
+{
+    const StaticInst *si = inst->staticInst.get();
+    if (si->numSrcRegs() < 2)
+        return 64;
+
+    // Operation kind from the mnemonic: div[u][w] / rem[u][w].
+    const std::string name = inst->staticInst->getName();
+    const bool is_rem = name.find("rem") != std::string::npos;
+    const bool half = !name.empty() && name.back() == 'w';
+    const std::string stem = half ? name.substr(0, name.size() - 1) : name;
+    const bool is_signed = !stem.empty() && stem.back() != 'u';
+
+    uint64_t lhs = inst->getRegOperand(si, 0);
+    uint64_t rhs = inst->getRegOperand(si, 1);
+    if (half) {
+        lhs = is_signed ? (uint64_t)(int64_t)(int32_t)lhs : (uint32_t)lhs;
+        rhs = is_signed ? (uint64_t)(int64_t)(int32_t)rhs : (uint32_t)rhs;
+    }
+    const bool lhs_neg = is_signed && ((int64_t)lhs < 0);
+    const bool rhs_neg = is_signed && ((int64_t)rhs < 0);
+    const uint64_t dividend = lhs_neg ? -lhs : lhs;
+    const uint64_t divisor = rhs_neg ? -rhs : rhs;
+
+    auto msb = [](uint64_t v) { return v ? 63 - __builtin_clzll(v) : 0; };
+
+    unsigned cycles = (lhs_neg || rhs_neg) ? 1 : 0;
+    const bool div_by_zero = divisor == 0;
+    const unsigned e_out_pos = (63 - (msb(dividend) - msb(divisor))) & 63;
+    if (div_by_zero || e_out_pos == 0) {
+        cycles += 65;                 // full-length loop
+    } else {
+        cycles += 66 - e_out_pos;     // early-out skips e_out_pos steps
+    }
+    bool neg_out = is_rem ? lhs_neg : (lhs_neg != rhs_neg);
+    if (div_by_zero && !is_rem)
+        neg_out = false;
+    if (neg_out)
+        cycles += 1;
+    return cycles;
+}
+
 void
 InstructionQueue::scheduleReadyInsts()
 {
@@ -1007,6 +1058,10 @@ InstructionQueue::scheduleReadyInsts()
             }
             if (idx > FUPool::NoFreeFU) {
                 op_latency = fu_pool->getOpLatency(op_class);
+                if (fu_pool->isEarlyOutDivider(op_class)) {
+                    op_latency = Cycles(
+                        op_latency + earlyOutDividerCycles(issuing_inst));
+                }
             }
         }
 

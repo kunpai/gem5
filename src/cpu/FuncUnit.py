@@ -148,6 +148,12 @@ class OpDesc(SimObject):
         "set to true when the functional unit for"
         "this op is fully pipelined. False means not pipelined at all.",
     )
+    earlyOutDivider = Param.Bool(
+        False,
+        "Model a radix-2 iterative divider with early-out: the latency is "
+        "opLat (fixed overhead) plus an operand-dependent number of "
+        "iterations instead of a constant.",
+    )
 
 
 class FUDesc(SimObject):
