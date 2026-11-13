@@ -84,7 +84,18 @@ Call/return on SmallBoom (-25%), jump chain on LargeBoom (+26%), overlapping DRA
 
 ## Layout
 
-`o3_boom.py` gem5 config (`--tuned` applies the fits), `cmp.py` / `heldout.py` / `specs.py`
-scoring, `ubench/` benchmark sources, `rtl-harness/` Verilator patches and probes,
-`results/` RTL measurements and counter dumps. BOOM RTL came pre-generated from
-OpenXiangShan/gsim `ready-to-run`. Set `BOOM_ALIGN_ROOT` to the working directory.
+The calibrated model is a gem5 stdlib prebuilt, `gem5.prebuilt.boommatched`
+(`src/python/gem5/prebuilt/boommatched/`): `BoomMatchedBoard(variant="small"|"large",
+calibrated=True)` with `set_bare_metal_workload(BinaryResource(...))`, built from `BoomProcessor`
+/ `BoomCore` and `BoomCacheHierarchy`. Structure sizes and every calibrated value live in
+`boommatched_params.py`. No stock stdlib board runs a bare-metal RISC-V binary, so the board
+is its own class: one core, 256 MiB at 0x80000000, no devices.
+
+`o3_boom.py` runs a binary on that board (`--tuned` = calibrated, `--t key=value` overrides a
+timing key, `--set` runs an assignment with `board`, `cpu`, `icache`, `dcache`, `l2` in scope).
+`o3_boom_raw.py` is the original non-stdlib config; `check_stdlib_port.py` asserts both give
+identical cycle and instruction counts on all three suites, both variants, stock and
+calibrated. `cmp.py` / `heldout.py` / `specs.py` score against RTL, `ubench/` holds benchmark
+sources, `rtl-harness/` the Verilator patches, probes and tracers, `results/` the RTL
+measurements, counter dumps and traces. BOOM RTL came pre-generated from OpenXiangShan/gsim
+`ready-to-run`. Set `BOOM_ALIGN_ROOT` to the working directory.

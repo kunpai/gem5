@@ -358,6 +358,18 @@ PySource('gem5.prebuilt.riscvmatched',
     'gem5/prebuilt/riscvmatched/riscvmatched_processor.py')
 PySource('gem5.prebuilt.riscvmatched',
     'gem5/prebuilt/riscvmatched/riscvmatched_core.py')
+PySource('gem5.prebuilt.boommatched',
+    'gem5/prebuilt/boommatched/__init__.py')
+PySource('gem5.prebuilt.boommatched',
+    'gem5/prebuilt/boommatched/boommatched_board.py')
+PySource('gem5.prebuilt.boommatched',
+    'gem5/prebuilt/boommatched/boommatched_cache.py')
+PySource('gem5.prebuilt.boommatched',
+    'gem5/prebuilt/boommatched/boommatched_core.py')
+PySource('gem5.prebuilt.boommatched',
+    'gem5/prebuilt/boommatched/boommatched_params.py')
+PySource('gem5.prebuilt.boommatched',
+    'gem5/prebuilt/boommatched/boommatched_processor.py')
 PySource('gem5.prebuilt.viper', 'gem5/prebuilt/viper/__init__.py')
 PySource('gem5.prebuilt.viper', 'gem5/prebuilt/viper/board.py')
 PySource('gem5.prebuilt.viper',
